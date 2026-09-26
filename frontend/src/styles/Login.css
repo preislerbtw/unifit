@@ -1,21 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
 .login-page {
   display: flex;
+  position: relative;
   min-height: 100vh;
   width: 100%;
 }
 
 .login-banner {
-  flex: 1;
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-  display: flex;
-  align-items: flex-start;
-  padding: 40px;
+  flex: 1.5;
+  position: relative;
+  min-height: 100vh;
+  background-image: url("../assets/foto_unifor.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.login-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 40, 120, 0.75),
+    rgba(30, 90, 220, 0.55)
+  );
 }
 
 .login-banner-logo {
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  height: 50px;
+  width: auto;
+  margin: 32px;
 }
 
 .login-form-side {
@@ -37,17 +63,13 @@
 }
 
 .login-icon {
-  width: 100px;
-  height: auto;    /* faltava o ; aqui */
-  border-radius: 50%;
-  background-color: #2563eb;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0 auto 20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 0;
+  object-fit: contain;
+  background: transparent;
+  margin: 0 auto 16px auto;
+  display: block;
 }
 
 .login-title {
@@ -146,8 +168,4 @@
   left: 40px;
   color: white;
   font-size: 13px;
-}
-
-.login-page {
-  position: relative;
 }

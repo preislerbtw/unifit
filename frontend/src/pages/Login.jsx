@@ -8,11 +8,11 @@ function Login() {
   return (
     <div className="login-page">
       <div className="login-banner">
-        <span className="login-banner-logo">UniFit</span>
+        <img src={logo} alt="UniFit" className="login-banner-logo" />
       </div>
       <div className="login-form-side">
         <div className="login-card">
-          <img src={logo} alt="UniFit" className="login-icon" />
+          <img src="/icon-unifor.webp" alt="Unifor" className="login-icon" />
           <h1 className="login-title">Acesse sua conta UniFit</h1>
           <p className="login-subtitle">Entre para montar seus treinos</p>
 
