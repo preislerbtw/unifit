@@ -4,7 +4,9 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
 }
@@ -42,6 +44,8 @@ html, body, #root {
   height: 50px;
   width: auto;
   margin: 32px;
+  filter: brightness(0) invert(1); 
+  /* filter : change the "natural" color from the icon to white */
 }
 
 .login-form-side {

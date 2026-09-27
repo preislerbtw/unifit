@@ -1,0 +1,118 @@
+.exercise-detail-page {
+  flex: 1;
+  padding: 32px 40px;
+}
+
+.voltar-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.exercise-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.exercise-media img,
+.exercise-media-placeholder {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.exercise-media-placeholder {
+  height: 280px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.exercise-info h1 {
+  font-size: 26px;
+  margin-bottom: 12px;
+  text-transform: capitalize;
+}
+
+.exercise-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.exercise-tags span {
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.tag-dificuldade {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.exercise-info h3 {
+  font-size: 14px;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  color: #374151;
+}
+
+.exercise-info p {
+  font-size: 14px;
+  color: #4b5563;
+  text-transform: capitalize;
+}
+
+.adicionar-btn {
+  margin-top: 24px;
+  padding: 12px 24px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adicionar-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.exercise-steps {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.exercise-steps h3 {
+  margin-bottom: 12px;
+}
+
+.exercise-steps ol {
+  padding-left: 20px;
+}
+
+.exercise-steps li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Responsivo — RNF01 */
+@media (max-width: 768px) {
+  .exercise-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

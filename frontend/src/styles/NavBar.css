@@ -19,6 +19,8 @@
 .navbar-logo {
   height: 32px;
   width: auto;
+  filter: brightness(0) invert(1);
+  /* filter : change the "natural" color from the icon to white */
 }
 
 .navbar-title {

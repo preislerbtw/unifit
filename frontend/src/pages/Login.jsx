@@ -9,6 +9,7 @@ function Login() {
 
   function handleSubmit(e) { // function that navigate through login to "menu"
     e.preventDefault();
+    sessionStorage.setItem("logado", "true");
     navigate("/home");
   }
 
