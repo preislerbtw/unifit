@@ -1,0 +1,137 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 32px;
+  background-color: #2563eb;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-logo {
+  height: 32px;
+  width: auto;
+}
+
+.navbar-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  gap: 24px;
+}
+
+.navbar-link {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.navbar-link.active,
+.navbar-link:hover {
+  opacity: 1;
+  border-bottom: 2px solid white;
+  padding-bottom: 4px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.navbar-profile-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.navbar-dropdown {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  background: white;
+  color: #111;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+.navbar-dropdown a,
+.navbar-dropdown button {
+  padding: 10px 16px;
+  text-align: left;
+  text-decoration: none;
+  color: #111;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-dropdown a:hover,
+.navbar-dropdown button:hover {
+  background-color: #f3f4f6;
+}
+
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.navbar-mobile-menu {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  width: 100%;
+  background-color: #2563eb;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+}
+
+.navbar-mobile-menu li a {
+  display: block;
+  padding: 12px 24px;
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-mobile-menu li a:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsivo — RNF01 */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-toggle {
+    display: block;
+  }
+}
