@@ -4,7 +4,6 @@ import logo from "../assets/logo.png";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
-
   return (
     <div className="login-page">
       <div className="login-banner">
@@ -18,7 +17,7 @@ function Login() {
 
           <form>
             <div className="login-field">
-              <label>Matrícula</label>
+              <label>Matrícula</label>  
               <input type="email" placeholder="Matrícula"/>
             </div>
 
@@ -42,7 +41,6 @@ function Login() {
               </label>
               <a href="#">Esqueci minha Senha</a>
             </div>
-
             <button type="submit" className="login-button">
               Acessar
             </button>
