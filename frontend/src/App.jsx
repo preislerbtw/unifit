@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Perfil from "./pages/Perfil";
 import ExerciseDetail from "./pages/ExerciseDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Exercises from "./pages/Exercises";
@@ -34,6 +35,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+          <Route
+          path="/Perfil/"
+          element={
+            <ProtectedRoute>
+              <Perfil />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );

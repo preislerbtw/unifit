@@ -45,7 +45,7 @@ function Navbar() {
           </button>
           {profileOpen && (
             <div className="navbar-dropdown">
-              <NavLink to="/perfil">Meu Perfil</NavLink>
+              <NavLink to="/Perfil">Meu Perfil</NavLink>
               <NavLink to="/historico">Histórico</NavLink>
               <button className="navbar-logout">Sair</button>
             </div>
@@ -68,8 +68,8 @@ function Navbar() {
             </li>
           ))}
           <li>
-            <NavLink to="/perfil" onClick={() => setMenuOpen(false)}>
-              Perfil
+            <NavLink to="/Perfil" onClick={() => setMenuOpen(false)}>
+              perfil
             </NavLink>
           </li>
         </ul>
