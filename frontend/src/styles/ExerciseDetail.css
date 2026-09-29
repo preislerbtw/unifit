@@ -1,15 +1,10 @@
 .exercise-detail-page {
   flex: 1;
-  padding: 32px 40px;
+  padding: 32px;
 }
 
-.voltar-btn {
-  background: none;
-  border: none;
-  color: #2563eb;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 20px;
+.exercise-detail-page .btn-soft {
+  margin-bottom: 24px;
 }
 
 .exercise-detail-grid {

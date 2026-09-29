@@ -1,43 +1,70 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
+import Button from "../components/Button";
 import { buscarExercicioPorId } from "../services/exerciseApi";
+import {
+  trBodyPart,
+  trEquipment,
+  trLevel,
+  trMuscle,
+  translateText,
+} from "../utils/translations";
 import "../styles/ExerciseDetail.css";
 
 function ExerciseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const nomePt = location.state?.nomePt;
+
   const [exercicio, setExercicio] = useState(null);
+  const [textos, setTextos] = useState(null); // { nome, passos } em português
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
 
   useEffect(() => {
+    let cancelado = false;
+
     async function carregar() {
       setCarregando(true);
       setErro(false);
+      setTextos(null);
+
       try {
         const dados = await buscarExercicioPorId(id);
+        if (cancelado) return;
         setExercicio(dados);
+        setCarregando(false);
+
+        // traduz nome e passos sem travar a tela
+        const [nome, passos] = await Promise.all([
+          nomePt ? Promise.resolve(nomePt) : translateText(dados.name),
+          Promise.all((dados.instructions || []).map(translateText)),
+        ]);
+        if (!cancelado) setTextos({ nome, passos });
       } catch (err) {
         console.error(err);
-        setErro(true);
-      } finally {
-        setCarregando(false);
+        if (!cancelado) {
+          setErro(true);
+          setCarregando(false);
+        }
       }
     }
-    carregar();
-  }, [id]);
 
-  function adicionarAFicha() {
-    // por enquanto só um alerta — depois conecta com a lógica de fichas (RF12-13)
-    alert(`"${exercicio.name}" adicionado à ficha!`);
-  }
+    carregar();
+    return () => {
+      cancelado = true;
+    };
+  }, [id, nomePt]);
+
+  const layout = { display: "flex", flexDirection: "column", minHeight: "100vh" };
 
   if (carregando) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <Navbar />
+      <div style={layout}>
+        <NavBar />
         <p style={{ padding: "40px" }}>Carregando exercício...</p>
         <Footer />
       </div>
@@ -46,67 +73,75 @@ function ExerciseDetail() {
 
   if (erro || !exercicio) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <Navbar />
+      <div style={layout}>
+        <NavBar />
         <div style={{ padding: "40px" }}>
           <p>Não foi possível carregar este exercício.</p>
-          <button onClick={() => navigate("/exercicios")}>← Voltar ao catálogo</button>
+          <Button variant="secondary" onClick={() => navigate("/exercicios")}>
+            ← Voltar ao catálogo
+          </Button>
         </div>
         <Footer />
       </div>
     );
   }
 
+  const titulo = textos?.nome || nomePt || exercicio.name;
+  const passos = textos?.passos || exercicio.instructions || [];
+
+  function adicionarAFicha() {
+    // por enquanto só um alerta — depois conecta com a lógica de fichas (RF12-13)
+    alert(`"${titulo}" adicionado à ficha!`);
+  }
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Navbar />
+    <div style={layout}>
+      <NavBar />
 
       <div className="exercise-detail-page">
-        <button className="voltar-btn" onClick={() => navigate("/exercicios")}>
-          ← Voltar
-        </button>
+        <Button variant="soft" onClick={() => navigate("/exercicios")}>
+          Voltar
+        </Button>
 
         <div className="exercise-detail-grid">
           <div className="exercise-media">
             {exercicio.gifUrl ? (
-              <img src={exercicio.gifUrl} alt={exercicio.name} />
+              <img src={exercicio.gifUrl} alt={titulo} />
             ) : (
               <div className="exercise-media-placeholder">▶ Vídeo da execução</div>
             )}
           </div>
 
           <div className="exercise-info">
-            <h1>{exercicio.name}</h1>
+            <h1>{titulo}</h1>
             <div className="exercise-tags">
-              <span>{exercicio.bodyPart}</span>
-              <span>{exercicio.equipment}</span>
-              <span className="tag-dificuldade">{exercicio.difficulty}</span>
+              <span>{trBodyPart(exercicio.bodyPart)}</span>
+              <span>{trEquipment(exercicio.equipment)}</span>
+              <span className="tag-dificuldade">{trLevel(exercicio.difficulty)}</span>
             </div>
 
             <h3>Músculos trabalhados</h3>
             <p>
-              <strong>{exercicio.target}</strong> (principal)
+              <strong>{trMuscle(exercicio.target)}</strong> (principal)
               {exercicio.secondaryMuscles?.length > 0 && (
                 <>
                   <br />
-                  {exercicio.secondaryMuscles.join(", ")} (secundários)
+                  {exercicio.secondaryMuscles.map(trMuscle).join(", ")} (secundários)
                 </>
               )}
             </p>
 
             <h3>Região do corpo</h3>
-            <p>{exercicio.bodyPart}</p>
+            <p>{trBodyPart(exercicio.bodyPart)}</p>
 
-            <button className="adicionar-btn" onClick={adicionarAFicha}>
-              + Adicionar à ficha
-            </button>
+            {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
           </div>
         </div>
 
         <div className="exercise-steps">
           <h3>Passo a passo</h3>
           <ol>
-            {exercicio.instructions?.map((passo, i) => (
+            {passos.map((passo, i) => (
               <li key={i}>{passo}</li>
             ))}
           </ol>
