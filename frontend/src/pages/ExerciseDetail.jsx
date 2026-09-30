@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import NavBar from "../components/NavBar";
-import Footer from "../components/Footer";
 import Button from "../components/Button";
 import { buscarExercicioPorId } from "../services/exerciseApi";
 import {
@@ -40,8 +38,10 @@ function ExerciseDetail() {
 
         // traduz nome e passos sem travar a tela
         const [nome, passos] = await Promise.all([
-          nomePt ? Promise.resolve(nomePt) : translateText(dados.name),
-          Promise.all((dados.instructions || []).map(translateText)),
+          nomePt
+            ? Promise.resolve(nomePt)
+            : translateText(dados.name, { isName: true }),
+          Promise.all((dados.instructions || []).map((p) => translateText(p))),
         ]);
         if (!cancelado) setTextos({ nome, passos });
       } catch (err) {
@@ -59,29 +59,17 @@ function ExerciseDetail() {
     };
   }, [id, nomePt]);
 
-  const layout = { display: "flex", flexDirection: "column", minHeight: "100vh" };
-
   if (carregando) {
-    return (
-      <div style={layout}>
-        <NavBar />
-        <p style={{ padding: "40px" }}>Carregando exercício...</p>
-        <Footer />
-      </div>
-    );
+    return <p style={{ padding: "40px" }}>Carregando exercício...</p>;
   }
 
   if (erro || !exercicio) {
     return (
-      <div style={layout}>
-        <NavBar />
-        <div style={{ padding: "40px" }}>
-          <p>Não foi possível carregar este exercício.</p>
-          <Button variant="secondary" onClick={() => navigate("/exercicios")}>
-            ← Voltar ao catálogo
-          </Button>
-        </div>
-        <Footer />
+      <div style={{ padding: "40px" }}>
+        <p>Não foi possível carregar este exercício.</p>
+        <Button variant="secondary" onClick={() => navigate("/exercicios")}>
+          ← Voltar ao catálogo
+        </Button>
       </div>
     );
   }
@@ -95,60 +83,54 @@ function ExerciseDetail() {
   }
 
   return (
-    <div style={layout}>
-      <NavBar />
+    <div className="exercise-detail-page">
+      <Button variant="soft" onClick={() => navigate("/exercicios")}>
+        Voltar
+      </Button>
 
-      <div className="exercise-detail-page">
-        <Button variant="soft" onClick={() => navigate("/exercicios")}>
-          Voltar
-        </Button>
-
-        <div className="exercise-detail-grid">
-          <div className="exercise-media">
-            {exercicio.gifUrl ? (
-              <img src={exercicio.gifUrl} alt={titulo} />
-            ) : (
-              <div className="exercise-media-placeholder">▶ Vídeo da execução</div>
-            )}
-          </div>
-
-          <div className="exercise-info">
-            <h1>{titulo}</h1>
-            <div className="exercise-tags">
-              <span>{trBodyPart(exercicio.bodyPart)}</span>
-              <span>{trEquipment(exercicio.equipment)}</span>
-              <span className="tag-dificuldade">{trLevel(exercicio.difficulty)}</span>
-            </div>
-
-            <h3>Músculos trabalhados</h3>
-            <p>
-              <strong>{trMuscle(exercicio.target)}</strong> (principal)
-              {exercicio.secondaryMuscles?.length > 0 && (
-                <>
-                  <br />
-                  {exercicio.secondaryMuscles.map(trMuscle).join(", ")} (secundários)
-                </>
-              )}
-            </p>
-
-            <h3>Região do corpo</h3>
-            <p>{trBodyPart(exercicio.bodyPart)}</p>
-
-            {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
-          </div>
+      <div className="exercise-detail-grid">
+        <div className="exercise-media">
+          {exercicio.gifUrl ? (
+            <img src={exercicio.gifUrl} alt={titulo} />
+          ) : (
+            <div className="exercise-media-placeholder">▶ Vídeo da execução</div>
+          )}
         </div>
 
-        <div className="exercise-steps">
-          <h3>Passo a passo</h3>
-          <ol>
-            {passos.map((passo, i) => (
-              <li key={i}>{passo}</li>
-            ))}
-          </ol>
+        <div className="exercise-info">
+          <h1>{titulo}</h1>
+          <div className="exercise-tags">
+            <span>{trBodyPart(exercicio.bodyPart)}</span>
+            <span>{trEquipment(exercicio.equipment)}</span>
+            <span className="tag-dificuldade">{trLevel(exercicio.difficulty)}</span>
+          </div>
+
+          <h3>Músculos trabalhados</h3>
+          <p>
+            <strong>{trMuscle(exercicio.target)}</strong> (principal)
+            {exercicio.secondaryMuscles?.length > 0 && (
+              <>
+                <br />
+                {exercicio.secondaryMuscles.map(trMuscle).join(", ")} (secundários)
+              </>
+            )}
+          </p>
+
+          <h3>Região do corpo</h3>
+          <p>{trBodyPart(exercicio.bodyPart)}</p>
+
+          {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
         </div>
       </div>
 
-      <Footer />
+      <div className="exercise-steps">
+        <h3>Passo a passo</h3>
+        <ol>
+          {passos.map((passo, i) => (
+            <li key={i}>{passo}</li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

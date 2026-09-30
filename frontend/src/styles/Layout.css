@@ -1,0 +1,17 @@
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0; /* evita o conteúdo estourar a largura */
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

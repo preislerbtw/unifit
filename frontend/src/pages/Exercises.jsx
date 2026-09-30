@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/NavBar";
-import Footer from "../components/Footer";
 import { buscarExercicios, listarTodosExercicios } from "../services/exerciseApi";
 import { traduzirTermoBusca } from "../utils/ExcercisesTraduct";
 import { PopularExercises } from "../utils/PopularExercises";
@@ -66,47 +64,41 @@ function Exercises() {
   }, [busca, todosExercicios, populares]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Navbar />
-
-      <div className="exercicios-page">
-        <div className="exercicios-search">
-          <input
-            type="text"
-            placeholder="Buscar exercício pelo nome (ex: supino, agachamento...)"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-          />
-        </div>
-
-        {carregando && <p>Carregando exercícios...</p>}
-        {erro && <p>Não foi possível carregar os exercícios. Tente novamente.</p>}
-
-        {!carregando && !erro && (
-          <div className="exercicios-grid">
-            {exerciciosFiltrados.length > 0 ? (
-              exerciciosFiltrados.map((ex) => (
-                <div
-                  key={ex.id}
-                  className="exercicio-card"
-                  onClick={() => navigate(`/exercicios/${ex.id}`)}
-                >
-                  <div className="exercicio-play">▶</div>
-                  <h3>{ex.nomePt || ex.name}</h3>
-                  <p>
-                    {ex.bodyPart} · {ex.equipment}
-                  </p>
-                  <span className="exercicio-dificuldade">{ex.difficulty}</span>
-                </div>
-              ))
-            ) : (
-              <p className="exercicios-vazio">Nenhum exercício encontrado.</p>
-            )}
-          </div>
-        )}
+    <div className="exercicios-page">
+      <div className="exercicios-search">
+        <input
+          type="text"
+          placeholder="Buscar exercício pelo nome (ex: supino, agachamento...)"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+        />
       </div>
 
-      <Footer />
+      {carregando && <p>Carregando exercícios...</p>}
+      {erro && <p>Não foi possível carregar os exercícios. Tente novamente.</p>}
+
+      {!carregando && !erro && (
+        <div className="exercicios-grid">
+          {exerciciosFiltrados.length > 0 ? (
+            exerciciosFiltrados.map((ex) => (
+              <div
+                key={ex.id}
+                className="exercicio-card"
+                onClick={() => navigate(`/exercicios/${ex.id}`)}
+              >
+                <div className="exercicio-play">▶</div>
+                <h3>{ex.nomePt || ex.name}</h3>
+                <p>
+                  {ex.bodyPart} · {ex.equipment}
+                </p>
+                <span className="exercicio-dificuldade">{ex.difficulty}</span>
+              </div>
+            ))
+          ) : (
+            <p className="exercicios-vazio">Nenhum exercício encontrado.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

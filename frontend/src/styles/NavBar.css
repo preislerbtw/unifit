@@ -1,4 +1,4 @@
-.navbar {
+/* .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,9 +20,10 @@
   height: 32px;
   width: auto;
   filter: brightness(0) invert(1);
-  /* filter : change the "natural" color from the icon to white */
+  /* filter : change the "natural" color from the icon to white 
 }
 
+/*
 .navbar-title {
   font-weight: bold;
   font-size: 18px;
@@ -126,8 +127,6 @@
 .navbar-mobile-menu li a:hover {
   background-color: #1d4ed8;
 }
-
-/* Responsivo — RNF01 */
 @media (max-width: 768px) {
   .navbar-links {
     display: none;
@@ -137,3 +136,4 @@
     display: block;
   }
 }
+*/
