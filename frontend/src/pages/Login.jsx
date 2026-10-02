@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import "../styles/Login.css";
 import logo from "../assets/logo.png";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   function handleSubmit(e) { // function that navigate through login to "menu"
     e.preventDefault();
@@ -23,10 +24,17 @@ function Login() {
           <img src="/icon-unifor.webp" alt="Unifor" className="login-icon" />
           <h1 className="login-title">Acesse sua conta UniFit</h1>
           <p className="login-subtitle">Entre para montar seus treinos</p>
+
+          {location.state?.cadastrado && (
+            <p className="login-sucesso">
+              Cadastro realizado! Entre com sua matrícula e senha.
+            </p>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="login-field">
-              <label>Matrícula</label>  
-              <input type="text" placeholder="Matrícula"/>
+              <label>Matrícula</label>
+              <input type="text" placeholder="Matrícula" />
             </div>
 
             <div className="login-field">
@@ -42,6 +50,7 @@ function Login() {
                 </button>
               </div>
             </div>
+
             <div className="login-options">
               <label>
                 <input type="checkbox" />
@@ -49,10 +58,15 @@ function Login() {
               </label>
               <a href="#">Esqueci minha Senha</a>
             </div>
+
             <button type="submit" className="login-button">
               Acessar
             </button>
           </form>
+
+          <p className="login-cadastro">
+            Não possui uma conta ainda? <Link to="/register">Cadastre-se</Link>
+          </p>
         </div>
       </div>
       <p className="login-footer">Fundação Edson Queiroz | UniFit</p>

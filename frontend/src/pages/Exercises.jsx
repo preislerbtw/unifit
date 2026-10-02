@@ -12,7 +12,7 @@ function Exercises() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
   const navigate = useNavigate();
-
+""
   // carrega os exercícios populares assim que a página abre
   useEffect(() => {
     async function carregarPopulares() {

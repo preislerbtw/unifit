@@ -38,7 +38,7 @@ function Sidebar() {
 
   return (
     <>
-      {/* Botão de menu (aparece só no mobile) */}
+      {/* botao de menu (aparece só no mobile) */}
       <button
         className="sidebar-mobile-btn"
         onClick={() => setMobileOpen(true)}
@@ -47,7 +47,7 @@ function Sidebar() {
         <Menu size={22} />
       </button>
 
-      {/* Fundo escurecido atrás da gaveta (mobile) */}
+      {/* fundo escurecido atrás da gaveta (mobile) */}
       {mobileOpen && <div className="sidebar-overlay" onClick={closeMobile} />}
 
       <aside
@@ -109,5 +109,4 @@ function Sidebar() {
     </>
   );
 }
-
 export default Sidebar;

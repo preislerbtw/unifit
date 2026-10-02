@@ -6,14 +6,16 @@ import ExerciseDetail from "./pages/ExerciseDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import Exercises from "./pages/Exercises";
+import Register from "./pages/Register";
+import Professors from "./pages/Professors";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-
-        {/* Tudo aqui dentro aparece com a sidebar + rodapé */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/professores" element={<Professors />} />
         <Route
           element={
             <ProtectedRoute>
