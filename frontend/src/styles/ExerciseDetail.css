@@ -22,11 +22,11 @@
 
 .exercise-media-placeholder {
   height: 280px;
-  background-color: #f3f4f6;
+  background-color: var(--bg-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 16px;
 }
 
@@ -43,8 +43,8 @@
 }
 
 .exercise-tags span {
-  background-color: #eff6ff;
-  color: #2563eb;
+  background-color: var(--bg-primary-subtle);
+  color: var(--text-primary);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
@@ -52,28 +52,28 @@
 }
 
 .tag-dificuldade {
-  background-color: #fef3c7 !important;
-  color: #92400e !important;
+  background-color: var(--bg-warning) !important;
+  color: var(--text-warning) !important;
 }
 
 .exercise-info h3 {
   font-size: 14px;
   margin-top: 16px;
   margin-bottom: 4px;
-  color: #374151;
+  color: var(--text-secondary);
 }
 
 .exercise-info p {
   font-size: 14px;
-  color: #4b5563;
+  color: var(--text-secondary);
   text-transform: capitalize;
 }
 
 .adicionar-btn {
   margin-top: 24px;
   padding: 12px 24px;
-  background-color: #2563eb;
-  color: white;
+  background-color: var(--primary);
+  color: var(--text-on-primary);
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -82,11 +82,11 @@
 }
 
 .adicionar-btn:hover {
-  background-color: #1d4ed8;
+  background-color: var(--primary-hover);
 }
 
 .exercise-steps {
-  background: #f9fafb;
+  background: var(--bg-subtle);
   border-radius: 12px;
   padding: 24px;
 }
@@ -102,7 +102,7 @@
 .exercise-steps li {
   margin-bottom: 8px;
   font-size: 14px;
-  color: #374151;
+  color: var(--text-secondary);
 }
 
 /* Responsivo — RNF01 */
