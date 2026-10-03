@@ -10,15 +10,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
+  Home,
+  SunIcon,
 } from "lucide-react";
 import logo from "../assets/logo.png";
-import "../styles/Sidebar.css";
+import "../styles/SideBar.css";
 
 const navItems = [
+
+  {label:"Menu", to:"/Home",icon:Home},
+
   { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
   { label: "Fichas", to: "/fichas", icon: ClipboardList },
   { label: "Professores", to: "/professores", icon: GraduationCap },
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
+
+  
 ];
 
 function Sidebar() {
@@ -27,6 +34,16 @@ function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false); // mobile: gaveta
 
   const closeMobile = () => setMobileOpen(false);
+
+  const handleTheme = ()=>{
+    const atual = document.documentElement.dataset.theme ??  (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+    const novo = atual === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = novo; 
+  try {
+    localStorage.setItem("tema", novo); 
+  } catch {}
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem("logado");
@@ -86,6 +103,15 @@ function Sidebar() {
         </nav>
 
         <div className="sidebar-footer">
+
+          <button className="sidebar-theme" title="mudar tema" onClick={handleTheme}>
+
+          <SunIcon/>
+
+
+
+          </button>
+
           <span className="sidebar-section sidebar-label">Conta</span>
           <NavLink
             to="/Perfil"

@@ -17,13 +17,7 @@ function Perfil() {
 
   return (
     <div className="perfil-page">
-      <Button
-        className="btn-voltar"
-        variant="soft"
-        onClick={() => navigate("/exercicios")}
-      >
-        Voltar
-      </Button>
+      
 
       <div className="perfil-avatar">
         <CircleUserRound className="icone-perfil" />

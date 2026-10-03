@@ -163,7 +163,7 @@ function Register() {
           </form>
 
           <p className="login-cadastro">
-            Já tem conta? <Link to="/">Entrar</Link>
+            Já tem conta?  <Link to="/"><span className="entrar"> Entrar</span></Link>
           </p>
         </div>
       </div>

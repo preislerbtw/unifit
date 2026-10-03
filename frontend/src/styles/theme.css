@@ -1,0 +1,198 @@
+/* ===== Paletas base (cores originais do projeto) ===== */
+*,*::before,*::after{
+  transition: background-color 0.4s ease-in-out,color 0.4s ease-in-out;
+}
+
+
+:root {
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+  --blue-950: #172554;
+
+  --indigo-200: #c7d2fe;
+  --indigo-400: #818cf8;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-800: #166534;
+  --green-900: #14532d;
+
+  --amber-100: #fef3c7;
+  --amber-200: #fde68a;
+  --amber-800: #92400e;
+  --amber-900: #78350f;
+
+  --red-400: #f87171;
+  --red-600: #dc2626;
+
+  --neutral-200: #e8e8e8;
+  --neutral-400: #c5c5c5;
+  --ink: #090909;
+  --white: #ffffff;
+
+  /* ===== Tokens semânticos — tema claro (padrão) ===== */
+  --bg-page: var(--gray-50);
+  --bg-surface: var(--white);
+  --bg-subtle: var(--slate-50);
+  --bg-muted: var(--gray-100);
+  --bg-hover: var(--slate-100);
+  --bg-primary-subtle: var(--blue-50);
+  --bg-primary-soft: var(--blue-100);
+  --bg-success: var(--green-100);
+  --bg-warning: var(--amber-100);
+
+  --text: var(--gray-900);
+  --text-secondary: var(--gray-700);
+  --text-muted: var(--gray-500);
+  --text-faint: var(--gray-400);
+  --text-on-primary: var(--white);
+  --text-primary: var(--blue-600);
+  --text-primary-strong: var(--blue-800);
+  --text-success: var(--green-800);
+  --text-warning: var(--amber-800);
+  --text-danger: var(--red-600);
+
+  --border: var(--gray-300);
+  --border-subtle: var(--gray-200);
+  --border-hover: var(--slate-300);
+  --border-accent: var(--indigo-200);
+
+  --primary: var(--blue-600);
+  --primary-hover: var(--blue-700);
+  --primary-light: var(--blue-500);
+  --accent: var(--indigo-600);
+  --sidebar-bg: var(--blue-600);
+  --focus-ring: rgba(37, 99, 235, 0.12);
+
+  --btn-soft-bg: var(--white);
+  --btn-soft-text: var(--ink);
+  --btn-soft-border: var(--neutral-200);
+  --neu-light: var(--white);
+  --neu-dark: var(--neutral-400);
+
+  color-scheme: light;
+}
+
+/* ===== Tema escuro — segue o sistema, a menos que data-theme="light" ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-page: var(--slate-900);
+    --bg-surface: var(--slate-800);
+    --bg-subtle: var(--slate-800);
+    --bg-muted: var(--slate-700);
+    --bg-hover: var(--slate-700);
+    --bg-primary-subtle: var(--blue-950);
+    --bg-primary-soft: var(--blue-900);
+    --bg-success: var(--green-900);
+    --bg-warning: var(--amber-900);
+
+    --text: var(--slate-100);
+    --text-secondary: var(--slate-300);
+    --text-muted: var(--slate-400);
+    --text-faint: var(--slate-500);
+    --text-on-primary: var(--white);
+    --text-primary: var(--blue-400);
+    --text-primary-strong: var(--blue-200);
+    --text-success: var(--green-200);
+    --text-warning: var(--amber-200);
+    --text-danger: var(--red-400);
+
+    --border: var(--slate-600);
+    --border-subtle: var(--slate-700);
+    --border-hover: var(--slate-600);
+    --border-accent: var(--indigo-700);
+
+    --primary: var(--blue-500);
+    --primary-hover: var(--blue-600);
+    --primary-light: var(--blue-400);
+    --accent: var(--indigo-400);
+    --sidebar-bg: var(--blue-900);
+    --focus-ring: rgba(59, 130, 246, 0.25);
+
+    --btn-soft-bg: var(--slate-800);
+    --btn-soft-text: var(--slate-100);
+    --btn-soft-border: var(--slate-700);
+    --neu-light: var(--slate-700);
+    --neu-dark: var(--slate-900);
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-page: var(--slate-900);
+  --bg-surface: var(--slate-800);
+  --bg-subtle: var(--slate-800);
+  --bg-muted: var(--slate-700);
+  --bg-hover: var(--slate-700);
+  --bg-primary-subtle: var(--blue-950);
+  --bg-primary-soft: var(--blue-900);
+  --bg-success: var(--green-900);
+  --bg-warning: var(--amber-900);
+
+  --text: var(--slate-100);
+  --text-secondary: var(--slate-300);
+  --text-muted: var(--slate-400);
+  --text-faint: var(--slate-500);
+  --text-on-primary: var(--white);
+  --text-primary: var(--blue-400);
+  --text-primary-strong: var(--blue-200);
+  --text-success: var(--green-200);
+  --text-warning: var(--amber-200);
+  --text-danger: var(--red-400);
+
+  --border: var(--slate-600);
+  --border-subtle: var(--slate-700);
+  --border-hover: var(--slate-600);
+  --border-accent: var(--indigo-700);
+
+  --primary: var(--blue-500);
+  --primary-hover: var(--blue-600);
+  --primary-light: var(--blue-400);
+  --accent: var(--indigo-400);
+  --sidebar-bg: var(--blue-900);
+  --focus-ring: rgba(59, 130, 246, 0.25);
+
+  --btn-soft-bg: var(--slate-800);
+  --btn-soft-text: var(--slate-100);
+  --btn-soft-border: var(--slate-700);
+  --neu-light: var(--slate-700);
+  --neu-dark: var(--slate-900);
+
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text);
+}
