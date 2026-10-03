@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, CalendarPlus, MessageCircle, MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import AppointmentModal from "../components/AppointmentModal";
-import { listarProfessores, criarAgendamento, } from "../services/professoresApi";
+import { listarProfessores } from "../services/professoresApi";
+import { createAppointment } from "../services/appointmentsApi";
 import "../styles/Professors.css";
-import Button from "../components/Button";
 
 // ex: "profa. ana beatriz lima" -> "AL"
 function iniciais(nome) {
@@ -21,8 +20,7 @@ function formatarData(iso) {
   return `${d}/${m}/${a}`;
 }
 
-function Professores() {
-  const navigate = useNavigate();
+function Professors() {
   const [professores, setProfessores] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
@@ -54,13 +52,23 @@ function Professores() {
   }, [busca, professores]);
 
   async function confirmarAgendamento(dados) {
-    await criarAgendamento(dados);
     const prof = professores.find((p) => p.id === dados.professorId);
+
+    // salva o agendamento para aparecer na página Agenda
+    await createAppointment({
+      professorId: dados.professorId,
+      professorName: prof.nome,
+      gym: prof.academia,
+      type: dados.tipo,
+      date: dados.data,
+      time: dados.horario,
+    });
+
     setSelecionado(null);
     setAviso(
       `${dados.tipo} solicitada com ${prof.nome} para ${formatarData(
         dados.data,
-      )} às ${dados.horario}.`,
+      )} às ${dados.horario}. Acompanhe na Agenda.`,
     );
   }
 
@@ -71,14 +79,6 @@ function Professores() {
 
   return (
     <div className="professors-page">
-      <Button
-        className="btn-voltar"
-        type="button"
-        onClick={() => navigate("/home")}
-      >
-        Voltar
-      </Button>
-
       <h1>Professores</h1>
       <p className="professors-subtitle">
         Conheça os professores, agende uma avaliação física ou aula e converse
@@ -156,4 +156,4 @@ function Professores() {
   );
 }
 
-export default Professores;
+export default Professors;

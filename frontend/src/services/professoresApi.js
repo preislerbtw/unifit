@@ -10,7 +10,7 @@ const professores = [
   },
   {
     id: 2,
-    nome: "Profa. Ana Beatriz Lima",
+    nome: "Prof. Lucas Oliveira",
     especialidade: "Avaliação física",
     academia: "Academia Unifor",
     bio: "Avaliações posturais e de composição corporal.",
@@ -24,7 +24,7 @@ const professores = [
   },
   {
     id: 4,
-    nome: "Profa. Marina Costa",
+    nome: "Prof. Ana Luiza Costa",
     especialidade: "Emagrecimento",
     academia: "Academia Central",
     bio: "Planejamento de treino para perda de gordura e saúde.",

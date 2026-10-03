@@ -1,0 +1,203 @@
+.schedule-page {
+  padding: 32px 40px;
+  flex: 1;
+  background-color: var(--bg-page);
+  color: var(--text);
+}
+
+.schedule-page h1 {
+  margin-bottom: 4px;
+}
+
+.schedule-subtitle {
+  margin-bottom: 24px;
+  color: var(--text-muted);
+}
+
+/* Abas */
+.schedule-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 24px;
+  background: var(--bg-muted);
+  border-radius: 10px;
+}
+
+.schedule-tabs button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.schedule-tabs button.is-active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Lista */
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 760px;
+}
+
+.appointment-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.appointment-card.is-cancelled {
+  opacity: 0.65;
+}
+
+.appointment-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--bg-primary-soft);
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.appointment-date strong {
+  font-size: 24px;
+}
+
+.appointment-date span {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.appointment-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.appointment-info p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.appointment-weekday {
+  text-transform: capitalize;
+}
+
+.appointment-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.appointment-title h3 {
+  font-size: 16px;
+}
+
+/* Status */
+.status-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: var(--bg-warning);
+  color: var(--text-warning);
+}
+
+.status-confirmed {
+  background: var(--bg-success);
+  color: var(--text-success);
+}
+
+.status-cancelled {
+  background: var(--bg-muted);
+  color: var(--text-muted);
+}
+
+/* Cancelar */
+.appointment-cancel {
+  padding: 8px 14px;
+  border: 1px solid var(--text-danger);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-danger);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.appointment-cancel:hover {
+  background: var(--bg-hover);
+}
+
+/* Vazio */
+.schedule-empty {
+  max-width: 760px;
+  padding: 40px 20px;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  color: var(--text-muted);
+}
+
+.schedule-link {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.schedule-link:hover {
+  background: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .schedule-page {
+    padding: 72px 20px 24px; /* espaço para o botão de menu no mobile */
+  }
+
+  .appointment-card {
+    flex-wrap: wrap;
+  }
+
+  .appointment-cancel {
+    width: 100%;
+  }
+}

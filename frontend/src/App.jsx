@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import Exercises from "./pages/Exercises";
 import Register from "./pages/Register";
 import Professors from "./pages/Professors";
+import Schedule from "./pages/Schedule";
 
 function App() {
   return (
@@ -15,7 +16,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/professores" element={<Professors />} />
         <Route
           element={
             <ProtectedRoute>
@@ -26,6 +26,8 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/exercicios" element={<Exercises />} />
           <Route path="/exercicios/:id" element={<ExerciseDetail />} />
+          <Route path="/professores" element={<Professors />} />
+          <Route path="/agenda" element={<Schedule />} />
           <Route path="/Perfil" element={<Perfil />} />
         </Route>
       </Routes>

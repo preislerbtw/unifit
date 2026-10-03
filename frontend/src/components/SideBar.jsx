@@ -11,39 +11,28 @@ import {
   ChevronRight,
   Menu,
   Home,
-  SunIcon,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "../hooks/useTheme";
 import logo from "../assets/logo.png";
 import "../styles/SideBar.css";
 
 const navItems = [
-
-  {label:"Menu", to:"/Home",icon:Home},
-
+  { label: "Menu", to: "/home", icon: Home },
   { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
   { label: "Fichas", to: "/fichas", icon: ClipboardList },
   { label: "Professores", to: "/professores", icon: GraduationCap },
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
-
-  
 ];
 
-function Sidebar() {
+function SideBar() {
   const navigate = useNavigate();
+  const { tema, alternarTema } = useTheme();
   const [collapsed, setCollapsed] = useState(false); // desktop: só ícones
   const [mobileOpen, setMobileOpen] = useState(false); // mobile: gaveta
 
   const closeMobile = () => setMobileOpen(false);
-
-  const handleTheme = ()=>{
-    const atual = document.documentElement.dataset.theme ??  (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-
-    const novo = atual === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = novo; 
-  try {
-    localStorage.setItem("tema", novo); 
-  } catch {}
-  };
 
   const handleLogout = () => {
     sessionStorage.removeItem("logado");
@@ -53,9 +42,11 @@ function Sidebar() {
   const linkClass = ({ isActive }) =>
     isActive ? "sidebar-link active" : "sidebar-link";
 
+  const temaEscuro = tema === "dark";
+
   return (
     <>
-      {/* botao de menu (aparece só no mobile) */}
+      {/* botão de menu (aparece só no mobile) */}
       <button
         className="sidebar-mobile-btn"
         onClick={() => setMobileOpen(true)}
@@ -103,16 +94,8 @@ function Sidebar() {
         </nav>
 
         <div className="sidebar-footer">
-
-          <button className="sidebar-theme" title="mudar tema" onClick={handleTheme}>
-
-          <SunIcon/>
-
-
-
-          </button>
-
           <span className="sidebar-section sidebar-label">Conta</span>
+
           <NavLink
             to="/Perfil"
             className={linkClass}
@@ -122,6 +105,18 @@ function Sidebar() {
             <CircleUserRound size={18} />
             <span className="sidebar-label">Perfil</span>
           </NavLink>
+
+          <button
+            className="sidebar-link"
+            onClick={alternarTema}
+            title={collapsed ? (temaEscuro ? "Tema claro" : "Tema escuro") : undefined}
+          >
+            {temaEscuro ? <Sun size={18} /> : <Moon size={18} />}
+            <span className="sidebar-label">
+              {temaEscuro ? "Tema Claro" : "Tema Escuro"}
+            </span>
+          </button>
+
           <button
             className="sidebar-link"
             onClick={handleLogout}
@@ -135,4 +130,5 @@ function Sidebar() {
     </>
   );
 }
-export default Sidebar;
+
+export default SideBar;
