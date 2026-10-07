@@ -1,0 +1,262 @@
+.dashboard-page {
+  padding: 32px 40px;
+  flex: 1;
+  background-color: var(--bg-page);
+  color: var(--text);
+}
+
+.dashboard-page h1 {
+  margin-bottom: 4px;
+}
+
+.dashboard-subtitle {
+  margin-bottom: 24px;
+  color: var(--text-muted);
+}
+
+.dashboard-section {
+  margin: 32px 0 14px;
+  font-size: 18px;
+}
+
+/* Indicadores */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.stat-card strong {
+  font-size: 28px;
+  color: var(--text);
+}
+
+.stat-card span {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.stat-card.is-link:hover {
+  border-color: var(--primary);
+}
+
+.stat-card.is-soon {
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.stat-card.is-soon strong {
+  font-size: 18px;
+}
+
+/* Listas */
+.dashboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 760px;
+}
+
+.dashboard-row,
+.request-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-row h3,
+.request-title h3 {
+  font-size: 16px;
+}
+
+.dashboard-row p {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.dashboard-empty {
+  max-width: 760px;
+  padding: 32px 20px;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  color: var(--text-muted);
+}
+
+/* Solicitações */
+.request-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.request-info p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.request-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 110px;
+}
+
+.request-reject {
+  padding: 10px 14px;
+  border: 1px solid var(--text-danger);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-danger);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.request-reject:hover {
+  background: var(--bg-hover);
+}
+
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 72px 20px 24px; /* espaço para o botão de menu no mobile */
+  }
+
+  .request-card {
+    flex-wrap: wrap;
+  }
+
+  .request-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .request-actions > * {
+    flex: 1;
+  }
+}
+
+/* títulos dos atalhos */
+.stat-card .stat-title {
+  font-size: 18px;
+}
+
+/* erro e conflito nas solicitações */
+.request-error {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg-warning);
+  color: var(--text-warning);
+  font-size: 14px;
+}
+
+.request-info .request-conflict {
+  color: var(--text-warning);
+  font-weight: 600;
+}
+
+.request-actions .prof-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* alunos (visão do professor) */
+.student-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.student-avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font-weight: 700;
+}
+
+.student-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.student-info h3 {
+  font-size: 16px;
+}
+
+.student-info p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.student-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.student-actions .prof-btn {
+  flex: none;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .student-card {
+    flex-wrap: wrap;
+  }
+
+  .student-actions {
+    width: 100%;
+  }
+
+  .student-actions .prof-btn {
+    flex: 1;
+  }
+}

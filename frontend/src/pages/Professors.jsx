@@ -74,7 +74,7 @@ function Professors() {
 
   function conversar(prof) {
     // TODO (RF15): abrir o chat com o professor, por exemplo navigate(`/chat/${prof.id}`)
-    setAviso(`O chat com ${prof.nome} será liberado na próxima etapa.`);
+    setAviso(`O chat com ${prof.nome} não está disponivel no momento!`);
   }
 
   return (

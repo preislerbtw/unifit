@@ -5,14 +5,18 @@ import {
   listAppointments,
   cancelAppointment,
 } from "../services/appointmentsApi";
+import { getSession } from "../services/session";
 import "../styles/Schedule.css";
-import { createAppointment } from "../services/appointmentsApi";
 
 const STATUS_LABEL = {
   pending: "Pendente",
   confirmed: "Confirmado",
+  rejected: "Recusado",
   cancelled: "Cancelado",
 };
+
+// agendamentos encerrados (vão direto para o histórico)
+const CLOSED = ["cancelled", "rejected"];
 
 // junta "2026-10-05" + "14:00" em um objeto Date
 function toDate(appointment) {
@@ -30,7 +34,7 @@ function AppointmentCard({ appointment, canCancel, onCancel }) {
   return (
     <article
       className={`appointment-card ${
-        appointment.status === "cancelled" ? "is-cancelled" : ""
+        CLOSED.includes(appointment.status) ? "is-cancelled" : ""
       }`}
     >
       <div className="appointment-date" aria-hidden="true">
@@ -72,10 +76,16 @@ function Schedule() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("upcoming");
+  const session = getSession();
 
   useEffect(() => {
     listAppointments()
-      .then(setAppointments)
+      // o aluno vê só os próprios agendamentos
+      .then((list) =>
+        setAppointments(
+          list.filter((a) => !a.studentId || a.studentId === session.userId)
+        )
+      )
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
@@ -87,7 +97,7 @@ function Schedule() {
     const past = [];
 
     for (const a of appointments) {
-      if (a.status !== "cancelled" && toDate(a) >= now) up.push(a);
+      if (!CLOSED.includes(a.status) && toDate(a) >= now) up.push(a);
       else past.push(a);
     }
 

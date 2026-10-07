@@ -1,0 +1,393 @@
+.workouts-page {
+  flex: 1;
+  padding: 32px 40px;
+  background-color: var(--bg-page);
+  color: var(--text);
+}
+
+.workouts-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.workouts-page h1 {
+  margin-bottom: 4px;
+}
+
+.workouts-subtitle {
+  margin-bottom: 20px;
+  color: var(--text-muted);
+}
+
+.workouts-header .workouts-subtitle {
+  margin-bottom: 0;
+}
+
+.workouts-new,
+.student-header-actions .prof-btn {
+  flex: none;
+  text-decoration: none;
+}
+
+.student-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.workouts-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.workouts-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 760px;
+  padding: 28px 24px;
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  color: var(--text-muted);
+}
+
+.workouts-empty .prof-btn {
+  flex: none;
+  text-decoration: none;
+}
+
+/* Lista de fichas */
+.workouts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 760px;
+}
+
+.workout-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.workout-card-main {
+  min-width: 0;
+}
+
+.workout-card-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.workout-card-title h3 {
+  font-size: 17px;
+}
+
+.workout-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--bg-primary-soft);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.workout-goal {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.workout-meta {
+  margin: 4px 0 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.workout-preview {
+  padding-left: 18px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.workout-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workout-card-actions .prof-btn {
+  flex: none;
+  text-decoration: none;
+}
+
+.workout-delete {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-danger);
+  cursor: pointer;
+}
+
+.workout-delete:hover {
+  background: var(--bg-hover);
+}
+
+/* Editor */
+.editor-form {
+  max-width: 860px;
+}
+
+.editor-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.editor-section {
+  margin: 12px 0 14px;
+  font-size: 18px;
+}
+
+.editor-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.editor-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.editor-line-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.editor-line-name span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.above-level {
+  color: var(--text-warning);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.editor-num {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 72px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.editor-num.editor-load {
+  width: 96px;
+}
+
+.editor-num input,
+.picker-search input,
+.add-row input {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.editor-num input:disabled,
+.editor-fields input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.editor-line-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.editor-line-actions button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.editor-line-actions button:last-child {
+  color: var(--text-danger);
+}
+
+.editor-line-actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.editor-actions .prof-btn {
+  flex: none;
+}
+
+.editor-fields .modal-field input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* Seletor de exercícios */
+.picker-card {
+  max-width: 560px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.picker-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+}
+
+.picker-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 11px 0;
+}
+
+.picker-status {
+  margin: 8px 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.picker-list {
+  flex: 1;
+  min-height: 120px;
+  margin: 8px 0 16px;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.picker-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.picker-item span {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.picker-item .prof-btn {
+  flex: none;
+  padding: 8px 14px;
+}
+
+.picker-item .prof-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* modal "adicionar à ficha" */
+.add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 10px;
+}
+
+.add-row .modal-field input {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .workouts-page {
+    padding: 72px 20px 24px; /* espaço para o botão de menu no mobile */
+  }
+
+  .workouts-header,
+  .workout-card {
+    flex-direction: column;
+  }
+
+  .editor-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-line {
+    flex-wrap: wrap;
+  }
+
+  .editor-line-name {
+    flex-basis: 100%;
+  }
+}

@@ -19,14 +19,14 @@ const professores = [
     id: 3,
     nome: "Prof. Rafael Souza",
     especialidade: "Treinamento funcional",
-    academia: "Academia Central",
+    academia: "Academia Unifor",
     bio: "Condicionamento, mobilidade e prevenção de lesões.",
   },
   {
     id: 4,
     nome: "Prof. Ana Luiza Costa",
     especialidade: "Emagrecimento",
-    academia: "Academia Central",
+    academia: "Academia Unifor",
     bio: "Planejamento de treino para perda de gordura e saúde.",
   },
 ];
