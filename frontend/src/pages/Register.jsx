@@ -61,16 +61,49 @@ function Register() {
     setErros((er) => ({ ...er, [name]: undefined })); // limpa o erro do campo
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(e) {
+  e.preventDefault();
 
-    const novosErros = validar(valores);
-    if (Object.keys(novosErros).length > 0) {
-      setErros(novosErros);
+  const novosErros = validar(valores);
+
+  if (Object.keys(novosErros).length > 0) {
+    setErros(novosErros);
+    return;
+  }
+
+  try {
+    const resposta = await fetch("http://localhost:3000/cadastro", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nome: valores.nome,
+        matricula: valores.matricula,
+        email: valores.email,
+        curso: valores.curso,
+        senha: valores.senha,
+      }),
+    });
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      alert(dados.message || "Erro ao cadastrar usuário.");
       return;
     }
-    navigate("/", { state: { cadastrado: true } });
+
+    alert("Usuário cadastrado com sucesso!");
+
+    navigate("/", {
+      state: { cadastrado: true },
+    });
+
+  } catch (erro) {
+    console.error(erro);
+    alert("Não foi possível conectar ao servidor.");
   }
+}
 
   return (
     <div className="login-page">

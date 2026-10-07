@@ -36,6 +36,9 @@ function SideBar() {
 
   const handleLogout = () => {
     sessionStorage.removeItem("logado");
+    sessionStorage.removeItem("usuario_logado");
+    localStorage.removeItem("logado");
+    localStorage.removeItem("usuario_logado");
     navigate("/", { replace: true });
   };
 
