@@ -95,7 +95,7 @@ function Dashboard() {
     <div className="dashboard-page">
       <h1>Painel</h1>
       <p className="dashboard-subtitle">
-        Olá, {session.name}. Acompanhe seus atendimentos e alunos.
+        Olá, {session.name}! Acompanhe seus atendimentos e alunos.
       </p>
 
       <div className="stat-grid">

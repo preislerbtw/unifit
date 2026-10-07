@@ -13,17 +13,32 @@ import {
   Home,
   Sun,
   Moon,
+  LayoutDashboard,
+  Inbox,
+  Users,
+  MessageCircle,
 } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
+import { getSession, clearSession } from "../services/session";
 import logo from "../assets/logo.png";
 import "../styles/SideBar.css";
 
-const navItems = [
+// menu do aluno
+const STUDENT_NAV = [
   { label: "Menu", to: "/home", icon: Home },
   { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
   { label: "Fichas", to: "/fichas", icon: ClipboardList },
   { label: "Professores", to: "/professores", icon: GraduationCap },
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
+];
+
+// menu do professor e do administrador
+const STAFF_NAV = [
+  { label: "Painel", to: "/painel", icon: LayoutDashboard },
+  { label: "Solicitações", to: "/solicitacoes", icon: Inbox },
+  { label: "Alunos", to: "/alunos", icon: Users },
+  { label: "Chat", to: "/chat", icon: MessageCircle },
+  { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
 ];
 
 function SideBar() {
@@ -32,10 +47,13 @@ function SideBar() {
   const [collapsed, setCollapsed] = useState(false); // desktop: só ícones
   const [mobileOpen, setMobileOpen] = useState(false); // mobile: gaveta
 
+  const session = getSession();
+  const navItems = session.role === "aluno" ? STUDENT_NAV : STAFF_NAV;
+
   const closeMobile = () => setMobileOpen(false);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("logado");
+    clearSession();
     navigate("/", { replace: true });
   };
 
