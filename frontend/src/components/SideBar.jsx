@@ -32,7 +32,7 @@ const STUDENT_NAV = [
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
 ];
 
-// menu do professor e do administrador
+// menu do professor/admin
 const STAFF_NAV = [
   { label: "Painel", to: "/painel", icon: LayoutDashboard },
   { label: "Solicitações", to: "/solicitacoes", icon: Inbox },

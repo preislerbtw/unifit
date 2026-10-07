@@ -7,9 +7,7 @@ function temaInicial() {
   } catch {
     // localStorage indisponível
   }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return "light";
 }
 
 export function useTheme() {
@@ -25,7 +23,7 @@ export function useTheme() {
   }, [tema]);
 
   const alternarTema = () => {
-    setTema((atual) => (atual === "dark" ? "dark" : "light"));
+    setTema((atual) => (atual === "dark" ? "light" : "dark"));
   };
 
   return { tema, alternarTema };
