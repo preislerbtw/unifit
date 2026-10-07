@@ -25,7 +25,7 @@ export function useTheme() {
   }, [tema]);
 
   const alternarTema = () => {
-    setTema((atual) => (atual === "dark" ? "light" : "dark"));
+    setTema((atual) => (atual === "dark" ? "dark" : "light"));
   };
 
   return { tema, alternarTema };

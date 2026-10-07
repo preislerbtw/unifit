@@ -17,7 +17,7 @@ function Login() {
 
     // matrícula e senha de prof/admin -> painel
     const staff = autenticarEquipe(matricula, senha);
-    if (staff) {
+    if (staff) {1
       setSession(staff);
       navigate("/painel");
       return;
