@@ -1,4 +1,4 @@
-const API_KEY = "3e8fb8c53bmshbe015244a07d2a8p11c2e0jsndbe281baaf5d";
+const API_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
 const BASE_URL = "https://exercisedb.p.rapidapi.com";
 
 const headers = {
