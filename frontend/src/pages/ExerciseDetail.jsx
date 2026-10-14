@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Button from "../components/Button";
 import { buscarExercicioPorId } from "../services/exerciseApi";
+import { exerciseImages } from "../services/exerciseMedia";
+import ExerciseDemo from "../components/ExerciseDemo";
+import { traduzirNomeExercicio } from "../utils/exerciseNamePt";
 import {
   trBodyPart,
   trEquipment,
@@ -10,6 +13,11 @@ import {
   translateText,
 } from "../utils/translations";
 import "../styles/ExerciseDetail.css";
+
+const TERMO =
+  "Declaro que li o passo a passo e estou ciente de que a academia não se responsabiliza " +
+  "por ferimentos ou lesões decorrentes da execução deste exercício sem o acompanhamento " +
+  "de um personal trainer ou professor.";
 
 function ExerciseDetail() {
   const { id } = useParams();
@@ -21,6 +29,7 @@ function ExerciseDetail() {
   const [textos, setTextos] = useState(null); // { nome, passos } em português
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
+  const [aceito, setAceito] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
@@ -29,6 +38,7 @@ function ExerciseDetail() {
       setCarregando(true);
       setErro(false);
       setTextos(null);
+      setAceito(false); // cada exercício exige uma nova confirmação
 
       try {
         const dados = await buscarExercicioPorId(id);
@@ -38,9 +48,7 @@ function ExerciseDetail() {
 
         // traduz nome e passos sem travar a tela
         const [nome, passos] = await Promise.all([
-          nomePt
-            ? Promise.resolve(nomePt)
-            : translateText(dados.name, { isName: true }),
+          nomePt ?? dados.namePt ?? traduzirNomeExercicio(dados.name).pt,
           Promise.all((dados.instructions || []).map((p) => translateText(p))),
         ]);
         if (!cancelado) setTextos({ nome, passos });
@@ -74,13 +82,8 @@ function ExerciseDetail() {
     );
   }
 
-  const titulo = textos?.nome || nomePt || exercicio.name;
+  const titulo = textos?.nome || nomePt || exercicio.namePt || traduzirNomeExercicio(exercicio.name).pt;
   const passos = textos?.passos || exercicio.instructions || [];
-
-  function adicionarAFicha() {
-    // por enquanto só um alerta — depois conecta com a lógica de fichas (RF12-13)
-    alert(`"${titulo}" adicionado à ficha!`);
-  }
 
   return (
     <div className="exercise-detail-page">
@@ -90,11 +93,7 @@ function ExerciseDetail() {
 
       <div className="exercise-detail-grid">
         <div className="exercise-media">
-          {exercicio.gifUrl ? (
-            <img src={exercicio.gifUrl} alt={titulo} />
-          ) : (
-            <div className="exercise-media-placeholder">▶ Vídeo da execução</div>
-          )}
+          <ExerciseDemo images={exerciseImages(exercicio)} alt={`Execução: ${titulo}`} />
         </div>
 
         <div className="exercise-info">
@@ -119,7 +118,8 @@ function ExerciseDetail() {
           <h3>Região do corpo</h3>
           <p>{trBodyPart(exercicio.bodyPart)}</p>
 
-          {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
+          {/* Quando reativar o botão, bloqueie até o aceite:
+          <Button onClick={adicionarAFicha} disabled={!aceito}>+ Adicionar à ficha</Button> */}
         </div>
       </div>
 
@@ -130,6 +130,18 @@ function ExerciseDetail() {
             <li key={i}>{passo}</li>
           ))}
         </ol>
+
+        <label className={`exercise-terms ${aceito ? "is-checked" : ""}`}>
+          <input
+            type="checkbox"
+            checked={aceito}
+            onChange={(e) => setAceito(e.target.checked)}
+          />
+          <span>{TERMO}</span>
+        </label>
+        {!aceito && (
+          <p className="exercise-terms-hint">Marque a caixa acima para confirmar que você leu e concorda.</p>
+        )}
       </div>
     </div>
   );

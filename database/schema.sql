@@ -1,5 +1,3 @@
--- MySQL Workbench Forward Engineering
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -305,6 +303,43 @@ CREATE TABLE IF NOT EXISTS `academia`.`dashboard` (
     REFERENCES `academia`.`usuario` (`idUsuario`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+-- table chat_mensagem
+-- table for interaction between teacher and student
+CREATE TABLE IF NOT EXISTS `academia`.`chat_mensagem` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+
+  `remetente_id` INT NOT NULL,
+  `destinatario_id` INT NOT NULL,
+
+  `mensagem` TEXT NOT NULL,
+
+  `criada_em` DATETIME NOT NULL
+    DEFAULT CURRENT_TIMESTAMP,
+
+  `lida` TINYINT(1) NOT NULL
+    DEFAULT 0,
+
+  PRIMARY KEY (`id`),
+
+  INDEX `idx_chat_remetente`
+    (`remetente_id`),
+
+  INDEX `idx_chat_destinatario`
+    (`destinatario_id`),
+
+  CONSTRAINT `fk_chat_remetente`
+    FOREIGN KEY (`remetente_id`)
+    REFERENCES `academia`.`usuario`
+    (`idUsuario`),
+
+  CONSTRAINT `fk_chat_destinatario`
+    FOREIGN KEY (`destinatario_id`)
+    REFERENCES `academia`.`usuario`
+    (`idUsuario`)
+
+)
 ENGINE = InnoDB;
 
 

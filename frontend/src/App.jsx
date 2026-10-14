@@ -53,14 +53,14 @@ function App() {
           <Route path="/fichas/nova" element={only(STUDENT, <WorkoutEditor />)} />
           <Route path="/fichas/:workoutId" element={only(STUDENT, <WorkoutEditor />)} />
 
-          {/* aluno e professor */}
+          {/* aluno/professor */}
           <Route path="/chat" element={only(["aluno", "professor"], <Chat />)} />
           <Route
             path="/chat/:partnerId"
             element={only(["aluno", "professor"], <Chat />)}
           />
 
-          {/* professor e administrador */}
+          {/* professor/administrador */}
           <Route path="/painel" element={only(STAFF, <Dashboard />)} />
           <Route path="/solicitacoes" element={only(STAFF, <Requests />)} />
           <Route path="/alunos" element={only(STAFF, <Students />)} />

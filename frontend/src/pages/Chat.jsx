@@ -16,7 +16,10 @@ import { levelLabel } from "../utils/levels";
 import "../styles/Chat.css";
 
 function time(iso) {
-  return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // Chat entre aluno e professor (RF15).
@@ -43,7 +46,7 @@ function Chat() {
             id: `professor-${p.id}`,
             name: p.nome,
             subtitle: p.especialidade,
-          }))
+          })),
         );
       } else {
         const students = await listStudentsOfProfessor(session, {
@@ -54,7 +57,7 @@ function Chat() {
             id: s.id,
             name: s.name,
             subtitle: `Nível ${levelLabel(s.level).toLowerCase()}`,
-          }))
+          })),
         );
       }
     }
@@ -68,7 +71,12 @@ function Chat() {
     : null;
 
   const refresh = useCallback(async () => {
-    setConvs(await listConversationsOf(session.userId));
+    const convsData = await listConversationsOf(session.userId);
+
+    console.log("CONVS DATA:", convsData);
+
+    setConvs(Array.isArray(convsData) ? convsData : []);
+
     if (currentConvId) setMessages(await listMessages(currentConvId));
     else setMessages([]);
   }, [session.userId, currentConvId]);
@@ -112,7 +120,7 @@ function Chat() {
     const convId = await ensureConversation(
       isStudent
         ? { student: me, professor: { id: partner.id, name: partner.name } }
-        : { student: { id: partner.id, name: partner.name }, professor: me }
+        : { student: { id: partner.id, name: partner.name }, professor: me },
     );
     await sendMessage(convId, { ...me, role: session.role }, content);
     setText("");
@@ -145,7 +153,9 @@ function Chat() {
 
         <section className="chat-thread">
           {!partner ? (
-            <div className="chat-placeholder">Selecione uma conversa para começar.</div>
+            <div className="chat-placeholder">
+              Selecione uma conversa para começar.
+            </div>
           ) : (
             <>
               <header className="chat-thread-header">
@@ -165,7 +175,9 @@ function Chat() {
 
               <div className="chat-messages">
                 {messages.length === 0 && (
-                  <p className="chat-empty">Nenhuma mensagem ainda. Diga olá!</p>
+                  <p className="chat-empty">
+                    Nenhuma mensagem ainda. Diga olá!
+                  </p>
                 )}
                 {messages.map((m) => (
                   <div
@@ -187,7 +199,11 @@ function Chat() {
                   onChange={(e) => setText(e.target.value)}
                   aria-label="Mensagem"
                 />
-                <button type="submit" className="prof-btn prof-btn-primary" disabled={!text.trim()}>
+                <button
+                  type="submit"
+                  className="prof-btn prof-btn-primary"
+                  disabled={!text.trim()}
+                >
                   <Send size={16} /> Enviar
                 </button>
               </form>

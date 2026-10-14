@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, CalendarPlus, MessageCircle, MapPin } from "lucide-react";
 import AppointmentModal from "../components/AppointmentModal";
 import { listarProfessores } from "../services/professoresApi";
@@ -21,6 +22,8 @@ function formatarData(iso) {
 }
 
 function Professors() {
+  const navigate = useNavigate();
+
   const [professores, setProfessores] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
@@ -73,8 +76,8 @@ function Professors() {
   }
 
   function conversar(prof) {
-    // TODO (RF15): abrir o chat com o professor, por exemplo navigate(`/chat/${prof.id}`)
-    setAviso(`O chat com ${prof.nome} não está disponivel no momento!`);
+    navigate(`/chat/professor-${prof.id}`);
+    //setAviso(`O chat com ${prof.nome} não está disponivel no momento!`); // fix: implementing chat interaction
   }
 
   return (

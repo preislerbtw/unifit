@@ -1,3 +1,5 @@
+import { traduzirNomeExercicio } from "./exerciseNamePt";
+
 const bodyParts = {
   chest: "Peitoral",
   back: "Costas",
@@ -9,9 +11,20 @@ const bodyParts = {
   waist: "Abdômen",
   cardio: "Cardio",
   neck: "Pescoço",
+  glutes: "Glúteos",
 };
 
 const equipments = {
+  // free-exercise-db
+  none: "Sem equipamento",
+  other: "Outro",
+  "body only": "Peso corporal",
+  machine: "Máquina",
+  kettlebells: "Kettlebell",
+  bands: "Elástico",
+  "exercise ball": "Bola suíça",
+  "foam roll": "Rolo de espuma",
+  "e-z curl bar": "Barra W",
   assisted: "Assistido",
   band: "Elástico",
   barbell: "Barra",
@@ -46,9 +59,14 @@ const levels = {
   beginner: "Iniciante",
   intermediate: "Intermediário",
   advanced: "Avançado",
+  expert: "Avançado",
 };
 
 const muscles = {
+  abdominals: "Abdominais",
+  quadriceps: "Quadríceps",
+  "lower back": "Lombar",
+  "middle back": "Meio das costas",
   abductors: "Abdutores",
   abs: "Abdominais",
   adductors: "Adutores",
@@ -79,54 +97,6 @@ const muscles = {
   neck: "Pescoço",
 };
 
-// usados só para montar o nome do exercício (não precisam de export)
-const withEquip = {
-  barbell: "com barra",
-  dumbbell: "com halteres",
-  cable: "no cabo",
-  kettlebell: "com kettlebell",
-  "smith machine": "no Smith",
-  "ez barbell": "com barra W",
-  "olympic barbell": "com barra olímpica",
-  "trap bar": "com barra hexagonal",
-  "leverage machine": "na máquina",
-  "sled machine": "na máquina sled",
-  band: "com elástico",
-  "resistance band": "com elástico",
-  "medicine ball": "com bola medicinal",
-  "stability ball": "na bola suíça",
-  "body weight": "",
-  assisted: "assistido",
-  weighted: "com peso",
-};
-
-const movements = {
-  "bench press": "supino reto",
-  "incline bench press": "supino inclinado",
-  "decline bench press": "supino declinado",
-  squat: "agachamento",
-  "front squat": "agachamento frontal",
-  deadlift: "levantamento terra",
-  "romanian deadlift": "levantamento terra romeno",
-  curl: "rosca",
-  "biceps curl": "rosca bíceps",
-  "hammer curl": "rosca martelo",
-  fly: "crucifixo",
-  "lateral raise": "elevação lateral",
-  "front raise": "elevação frontal",
-  "shoulder press": "desenvolvimento",
-  row: "remada",
-  "bent over row": "remada curvada",
-  lunge: "avanço",
-  "pull up": "barra fixa",
-  "push up": "flexão",
-  "triceps extension": "extensão de tríceps",
-  "triceps pushdown": "tríceps na polia",
-  crunch: "abdominal",
-  plank: "prancha",
-  // adicione conforme for encontrando
-};
-
 const translate = (map, value) =>
   map[String(value || "").toLowerCase()] || value;
 
@@ -135,41 +105,47 @@ export const trEquipment = (v) => translate(equipments, v);
 export const trLevel = (v) => translate(levels, v);
 export const trMuscle = (v) => translate(muscles, v);
 
-// traduz o nome do exercício por padrão: equipamento + movimento
+// nome do exercício em português (null se ficou alguma palavra sem tradução)
 export function trExerciseName(name) {
-  if (!name) return name;
-  const lower = name.trim().toLowerCase();
-  const equips = Object.keys(withEquip).sort((a, b) => b.length - a.length);
-
-  // equipamento no início: "barbell bench press"
-  let equip = equips.find((e) => lower.startsWith(e + " "));
-  let rest = equip ? lower.slice(equip.length + 1) : lower;
-
-  // equipamento no fim: "bench press barbell"
-  if (!equip) {
-    equip = equips.find((e) => lower.endsWith(" " + e));
-    if (equip) rest = lower.slice(0, lower.length - equip.length - 1);
-  }
-
-  const move = movements[rest];
-  console.log("nome:", lower, "| equip:", equip, "| movimento:", rest, "| achou:", !!move);
-  if (!move) return null;
-
-  const suffix = equip ? withEquip[equip] : "";
-  const result = `${move} ${suffix}`.trim();
-  return result.charAt(0).toUpperCase() + result.slice(1);
+  const r = traduzirNomeExercicio(name);
+  return r.completo ? r.pt : null;
 }
 
-// tradução de texto livre com cache no localStorage
-export async function translateText(text, { isName = false } = {}) {
+// ---------- tradução de texto livre (passo a passo) ----------
+const MYMEMORY_EMAIL = import.meta.env.VITE_MYMEMORY_EMAIL; // opcional: sobe a cota diária
+
+function limpar(t) {
+  return String(t)
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/^[\s•\-–*]+/, "") // tira "•" e "-" soltos no começo do passo
+    .trim();
+}
+
+// Tradutor embutido do Chrome (gratuito e sem limite). Se não existir, retorna null.
+let nativoPromise = null;
+function getTradutorNativo() {
+  if (typeof self === "undefined" || !("Translator" in self))
+    return Promise.resolve(null);
+  nativoPromise ??= (async () => {
+    try {
+      const opts = { sourceLanguage: "en", targetLanguage: "pt" };
+      if ((await self.Translator.availability(opts)) === "unavailable")
+        return null;
+      return await self.Translator.create(opts);
+    } catch {
+      nativoPromise = null; // tenta de novo na próxima chamada
+      return null;
+    }
+  })();
+  return nativoPromise;
+}
+
+export async function translateText(text) {
   if (!text) return text;
 
-  if (isName) {
-    const local = trExerciseName(text);
-    if (local) return local;
-  }
-
-  const key = `tr:v2:${text}`;
+  const key = `tr:v3:${text}`;
   try {
     const cached = localStorage.getItem(key);
     if (cached) return cached;
@@ -177,29 +153,45 @@ export async function translateText(text, { isName = false } = {}) {
     // localStorage indisponível? segue sem cache
   }
 
+  const guardar = (valor) => {
+    try {
+      localStorage.setItem(key, valor);
+    } catch {
+      // ignora
+    }
+    return valor;
+  };
+
+  // 1) tradutor do navegador
   try {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
-      text
-    )}&langpair=en|pt-BR`; // api pra traduzir
-    const res = await fetch(url);
+    const nativo = await getTradutorNativo();
+    if (nativo) {
+      const r = limpar(await nativo.translate(text));
+      if (r) return guardar(r);
+    }
+  } catch {
+    // cai para a API
+  }
+
+  // 2) MyMemory (cota diária pequena sem e-mail)
+  try {
+    const params = new URLSearchParams({ q: text, langpair: "en|pt-BR" });
+    if (MYMEMORY_EMAIL) params.set("de", MYMEMORY_EMAIL);
+    const res = await fetch(
+      `https://api.mymemory.translated.net/get?${params}`,
+    );
     const data = await res.json();
     const result = data?.responseData?.translatedText;
 
-    const bad =
+    const ruim =
       !result ||
       result.toUpperCase().includes("MYMEMORY WARNING") ||
       result.toLowerCase() === text.toLowerCase();
 
-    if (data?.responseStatus === 200 && !bad) {
-      try {
-        localStorage.setItem(key, result);
-      } catch {
-        // ignora
-      }
-      return result;
-    }
+    if (Number(data?.responseStatus) === 200 && !ruim)
+      return guardar(limpar(result));
   } catch (err) {
     console.error("Erro ao traduzir:", err);
   }
-  return text;
+  return limpar(text);
 }
