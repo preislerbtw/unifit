@@ -22,7 +22,15 @@
   object-fit: contain;
   background: #fff;
   border-radius: 12px;
-  display: block;
+  padding: -20px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+.exercise-media{
+  margin: auto;
+
 }
 
 .exercise-media-placeholder {
@@ -158,7 +166,8 @@
     grid-template-columns: 1fr;
   }
 
-  .exercise-media img {
+  .exercise-demo,
+  .exercise-media-placeholder {
     max-width: 100%;
   }
 }

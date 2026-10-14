@@ -30,6 +30,7 @@ const STUDENT_NAV = [
   { label: "Fichas", to: "/fichas", icon: ClipboardList },
   { label: "Professores", to: "/professores", icon: GraduationCap },
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
+  { label: "Chat", to: "/chat", icon: MessageCircle},
 ];
 
 // menu do professor/admin
