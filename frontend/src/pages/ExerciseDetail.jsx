@@ -14,11 +14,6 @@ import {
 } from "../utils/translations";
 import "../styles/ExerciseDetail.css";
 
-const TERMO =
-  "Declaro que li o passo a passo e estou ciente de que a academia não se responsabiliza " +
-  "por ferimentos ou lesões decorrentes da execução deste exercício sem o acompanhamento " +
-  "de um personal trainer ou professor.";
-
 function ExerciseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,7 +24,6 @@ function ExerciseDetail() {
   const [textos, setTextos] = useState(null); // { nome, passos } em português
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
-  const [aceito, setAceito] = useState(false);
 
   useEffect(() => {
     let cancelado = false;
@@ -38,7 +32,6 @@ function ExerciseDetail() {
       setCarregando(true);
       setErro(false);
       setTextos(null);
-      setAceito(false); // cada exercício exige uma nova confirmação
 
       try {
         const dados = await buscarExercicioPorId(id);
@@ -118,8 +111,7 @@ function ExerciseDetail() {
           <h3>Região do corpo</h3>
           <p>{trBodyPart(exercicio.bodyPart)}</p>
 
-          {/* Quando reativar o botão, bloqueie até o aceite:
-          <Button onClick={adicionarAFicha} disabled={!aceito}>+ Adicionar à ficha</Button> */}
+          {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
         </div>
       </div>
 
@@ -130,18 +122,6 @@ function ExerciseDetail() {
             <li key={i}>{passo}</li>
           ))}
         </ol>
-
-        <label className={`exercise-terms ${aceito ? "is-checked" : ""}`}>
-          <input
-            type="checkbox"
-            checked={aceito}
-            onChange={(e) => setAceito(e.target.checked)}
-          />
-          <span>{TERMO}</span>
-        </label>
-        {!aceito && (
-          <p className="exercise-terms-hint">Marque a caixa acima para confirmar que você leu e concorda.</p>
-        )}
       </div>
     </div>
   );

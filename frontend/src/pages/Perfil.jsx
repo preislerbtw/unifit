@@ -13,6 +13,8 @@ function Perfil() {
     email: "antonioenzo@edu.unifor.br",
     peso: 82,
     altura: 1.85,
+    // mockado: no futuro vem do banco (ID numérico de 4 dígitos, único por usuário)
+    idUsuario: "0001",
   };
 
   return (
@@ -52,6 +54,11 @@ function Perfil() {
         <div className="dado-box">
           <span className="dado-label">Altura</span>
           <span className="dado-valor">{usuario.altura.toFixed(2)} M</span>
+        </div>
+
+        <div className="dado-box">
+          <span className="dado-label">ID do Usuário</span>
+          <span className="dado-valor">{usuario.idUsuario}</span>
         </div>
       </div>
     </div>
