@@ -2,30 +2,43 @@ import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import "../styles/Login.css";
 import logo from "../assets/logo.png";
-import { setSession, DEMO_STUDENTS } from "../services/session";
+import { setSession, sessaoDeUsuario } from "../services/session";
 import { autenticarEquipe } from "../services/mockUsers";
+import { login } from "../services/authApi";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setErro("");
 
-    // matrícula e senha de prof/admin -> painel
+    // matrícula e senha de prof/admin de demonstração (ainda não tem
+    // cadastro de equipe no banco) -> painel
     const staff = autenticarEquipe(matricula, senha);
-    if (staff) {1
+    if (staff) {
       setSession(staff);
       navigate("/painel");
       return;
     }
 
-    // qualquer outra coisa (inclusive campos vazios) -> aluno de demonstração
-    setSession({ role: "aluno", ...DEMO_STUDENTS[0] });
-    navigate("/home");
+    // aluno de verdade, autenticado contra o banco
+    setEnviando(true);
+    try {
+      const usuario = await login(matricula, senha);
+      setSession(sessaoDeUsuario(usuario));
+      navigate("/home");
+    } catch (err) {
+      setErro(err.message || "Matrícula ou senha incorretos.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -44,6 +57,8 @@ function Login() {
               Cadastro realizado! Entre com sua matrícula e senha.
             </p>
           )}
+
+          {erro && <p className="login-erro">{erro}</p>}
 
           <form onSubmit={handleSubmit}>
             <div className="login-field">
@@ -83,8 +98,8 @@ function Login() {
               <a href="#">Esqueci minha Senha</a>
             </div>
 
-            <button type="submit" className="login-button">
-              Acessar
+            <button type="submit" className="login-button" disabled={enviando}>
+              {enviando ? "Entrando..." : "Acessar"}
             </button>
           </form>
 

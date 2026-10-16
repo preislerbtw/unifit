@@ -194,3 +194,13 @@ body,
   font-size: 14px;
   text-align: center;
 }
+
+.login-erro {
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg-danger);
+  color: var(--text-danger);
+  font-size: 14px;
+  text-align: center;
+}

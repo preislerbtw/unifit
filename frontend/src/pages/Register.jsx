@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import "../styles/Login.css";
 import "../styles/Register.css";
 import logo from "../assets/logo.png";
+import { cadastrar } from "../services/authApi";
 
 const inicial = {
   nome: "",
@@ -54,6 +55,7 @@ function Register() {
   const [valores, setValores] = useState(inicial);
   const [erros, setErros] = useState({});
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -61,7 +63,7 @@ function Register() {
     setErros((er) => ({ ...er, [name]: undefined })); // limpa o erro do campo
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const novosErros = validar(valores);
@@ -69,7 +71,26 @@ function Register() {
       setErros(novosErros);
       return;
     }
-    navigate("/", { state: { cadastrado: true } });
+
+    setEnviando(true);
+    try {
+      await cadastrar({
+        nome: valores.nome,
+        email: valores.email,
+        senha: valores.senha,
+        matricula: valores.matricula,
+        curso: valores.curso,
+        perfil: "aluno",
+      });
+      navigate("/", { state: { cadastrado: true } });
+    } catch (err) {
+      setErros((er) => ({
+        ...er,
+        geral: err.message || "Não foi possível cadastrar. Tente novamente.",
+      }));
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -82,6 +103,8 @@ function Register() {
         <div className="login-card">
           <h1 className="login-title">Crie sua conta UniFit</h1>
           <p className="login-subtitle">Preencha seus dados para começar</p>
+
+          {erros.geral && <p className="login-erro">{erros.geral}</p>}
 
           <form onSubmit={handleSubmit} noValidate>
             <Campo label="Nome completo" erro={erros.nome}>
@@ -157,8 +180,8 @@ function Register() {
               />
             </Campo>
 
-            <button type="submit" className="login-button">
-              Criar conta
+            <button type="submit" className="login-button" disabled={enviando}>
+              {enviando ? "Criando conta..." : "Criar conta"}
             </button>
           </form>
 

@@ -26,17 +26,33 @@ const server = http.createServer(async (req, res) => {
   // TESTE BANCO
 
   if (req.url === "/teste-banco") {
-    const [rows] =
-      await db.query(
-        "SELECT 1 + 1 AS resultado"
+    try {
+      const [rows] =
+        await db.query(
+          "SELECT 1 + 1 AS resultado"
+        );
+
+      res.writeHead(200, {
+        "Content-Type":
+          "application/json",
+      });
+
+      res.end(JSON.stringify(rows));
+    } catch (erro) {
+      console.log(erro);
+
+      res.writeHead(500, {
+        "Content-Type":
+          "application/json",
+      });
+
+      res.end(
+        JSON.stringify({
+          message: "Erro ao conectar no banco",
+          erro: erro.message,
+        })
       );
-
-    res.writeHead(200, {
-      "Content-Type":
-        "application/json",
-    });
-
-    res.end(JSON.stringify(rows));
+    }
     return;
   }
 

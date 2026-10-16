@@ -52,8 +52,10 @@
   --amber-800: #92400e;
   --amber-900: #78350f;
 
+  --red-100: #fee2e2;
   --red-400: #f87171;
   --red-600: #dc2626;
+  --red-900: #7f1d1d;
 
   --neutral-200: #e8e8e8;
   --neutral-400: #c5c5c5;
@@ -70,6 +72,7 @@
   --bg-primary-soft: var(--blue-100);
   --bg-success: var(--green-100);
   --bg-warning: var(--amber-100);
+  --bg-danger: var(--red-100);
 
   --text: var(--gray-900);
   --text-secondary: var(--gray-700);
@@ -115,6 +118,7 @@
     --bg-primary-soft: var(--blue-900);
     --bg-success: var(--green-900);
     --bg-warning: var(--amber-900);
+    --bg-danger: var(--red-900);
 
     --text: var(--slate-100);
     --text-secondary: var(--slate-300);
@@ -159,6 +163,7 @@
   --bg-primary-soft: var(--blue-900);
   --bg-success: var(--green-900);
   --bg-warning: var(--amber-900);
+  --bg-danger: var(--red-900);
 
   --text: var(--slate-100);
   --text-secondary: var(--slate-300);

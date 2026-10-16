@@ -31,3 +31,20 @@ export function clearSession() {
   sessionStorage.removeItem(KEY);
   sessionStorage.removeItem("logado");
 }
+
+// Converte o usuário devolvido pela API de login (tabela `usuario`) no
+// formato de sessão que o resto do app usa (session.role, session.userId...).
+export function sessaoDeUsuario(usuario) {
+  return {
+    role: usuario.perfil || "aluno",
+    userId: String(usuario.id),
+    idUsuario: usuario.id,
+    name: usuario.nome,
+    email: usuario.email,
+    matricula: usuario.matricula,
+    curso: usuario.curso,
+    altura: usuario.altura,
+    peso: usuario.peso,
+    level: usuario.nivel_experiencia || undefined,
+  };
+}
