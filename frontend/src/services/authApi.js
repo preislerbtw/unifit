@@ -1,8 +1,4 @@
 const API_URL = "http://localhost:3000";
-
-// Cadastra um usuário de verdade no banco (tabela `usuario`).
-// `dados` deve ter: nome, email, senha, matricula, curso, perfil,
-// e opcionalmente data_nascimento, objetivo, nivel_experiencia.
 export async function cadastrar(dados) {
   const response = await fetch(`${API_URL}/cadastro`, {
     method: "POST",
@@ -24,7 +20,7 @@ export async function cadastrar(dados) {
   return resultado;
 }
 
-// Faz login contra o banco e devolve os dados do usuário (sem a senha).
+// faz login contra o banco e devolve os dados do usuário (sem a senha).
 export async function login(matricula, senha) {
   const response = await fetch(`${API_URL}/login`, {
     method: "POST",
@@ -39,4 +35,27 @@ export async function login(matricula, senha) {
   }
 
   return resultado.usuario;
+}
+
+// salva peso (kg) e altura (m) do usuário logado. Devolve { peso, altura }.
+export async function atualizarMedidas(idUsuario, peso, altura) {
+  const response = await fetch(`${API_URL}/perfil/medidas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idUsuario, peso, altura }),
+  });
+
+  const resultado = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resultado.message || "Não foi possível salvar.");
+  }
+
+  if (resultado.peso == null || resultado.altura == null) {
+    throw new Error(
+      "O servidor não confirmou os dados. Reinicie o back-end (node server.js)."
+    );
+  }
+
+  return { peso: resultado.peso, altura: resultado.altura };
 }

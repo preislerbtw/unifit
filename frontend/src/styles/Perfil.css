@@ -62,3 +62,80 @@
   color: var(--text);
   word-break: break-all;
 }
+
+/* ---- edição de peso e altura ---- */
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.perfil-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--bg-surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.perfil-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.perfil-acoes {
+  display: flex;
+  gap: 12px;
+}
+
+.perfil-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.perfil-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.perfil-btn-primario {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.perfil-btn-secundario {
+  background-color: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.perfil-erro {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.perfil-sucesso {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.85rem;
+  text-align: center;
+}

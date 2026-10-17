@@ -6,7 +6,7 @@ console.log("DB_HOST:", process.env.DB_HOST);
 console.log("DB_USER:", process.env.DB_USER);
 console.log("DB_NAME:", process.env.DB_NAME);
 
-// helpers
+// Helpers
 
 function enviarJSON(res, status, data) {
   res.writeHead(status, { "Content-Type": "application/json" });
@@ -41,7 +41,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // testar banco
+  // TESTE BANCO
 
   if (req.url === "/teste-banco") {
     try {
@@ -57,7 +57,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // cadastro
+  // CADASTRO
+  // Cadastro público: sempre cria ALUNO. Professor e admin são criados
+  // direto no banco (ex.: backend/seed.js), nunca por essa rota.
 
   if (req.method === "POST" && req.url === "/cadastro") {
     try {
@@ -117,6 +119,13 @@ const server = http.createServer(async (req, res) => {
       enviarJSON(res, 201, { message: "Usuario cadastrado com sucesso!" });
     } catch (erro) {
       console.log(erro);
+
+      // matrícula ou e-mail já existem (índices únicos da tabela usuario)
+      if (erro.code === "ER_DUP_ENTRY") {
+        enviarJSON(res, 409, { message: "Matrícula ou e-mail já cadastrado." });
+        return;
+      }
+
       enviarJSON(res, 400, {
         message: "Erro ao cadastrar usuário",
         erro: erro.message,
@@ -125,7 +134,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // login
+  // LOGIN
+  // Devolve o perfil (aluno | professor | admin) para o front decidir
+  // quais telas liberar, e o professorId quando o usuário é professor.
 
   if (req.method === "POST" && req.url === "/login") {
     try {
@@ -154,7 +165,7 @@ const server = http.createServer(async (req, res) => {
 
       const user = usuario[0];
 
-      // se o usuario for professor, busca o id dele na tabela professor
+      // se o usuário for professor, busca o id dele na tabela professor
       const [prof] = await db.query(
         `
         SELECT idProfessor
@@ -188,7 +199,52 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // enviar mensagens
+  // ATUALIZAR PESO E ALTURA (tela de perfil)
+  // peso em kg (ex.: 72.5) e altura em metros (ex.: 1.75)
+
+  if (req.method === "POST" && req.url === "/perfil/medidas") {
+    try {
+      const { idUsuario, peso, altura } = await lerBody(req);
+
+      const p = Number(peso);
+      const a = Number(altura);
+
+      if (!idUsuario) {
+        enviarJSON(res, 400, { message: "Usuário não informado." });
+        return;
+      }
+      if (!Number.isFinite(p) || p < 20 || p > 300) {
+        enviarJSON(res, 400, { message: "Peso inválido (use entre 20 e 300 kg)." });
+        return;
+      }
+      if (!Number.isFinite(a) || a < 1 || a > 2.5) {
+        enviarJSON(res, 400, { message: "Altura inválida (use entre 1,00 e 2,50 m)." });
+        return;
+      }
+
+      const [resultado] = await db.query(
+        `
+        UPDATE usuario
+        SET peso = ?, altura = ?
+        WHERE idUsuario = ?
+        `,
+        [p, a, idUsuario]
+      );
+
+      if (resultado.affectedRows === 0) {
+        enviarJSON(res, 404, { message: "Usuário não encontrado." });
+        return;
+      }
+
+      enviarJSON(res, 200, { message: "Dados salvos!", peso: p, altura: a });
+    } catch (erro) {
+      console.log(erro);
+      enviarJSON(res, 500, { message: "Erro ao salvar peso e altura." });
+    }
+    return;
+  }
+
+  // ENVIAR MENSAGEM
 
   if (req.method === "POST" && req.url === "/mensagem") {
     try {
@@ -215,7 +271,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // buscar mensagens
+  // BUSCAR MENSAGENS
 
   if (req.method === "GET" && req.url.startsWith("/mensagens")) {
     try {
@@ -245,7 +301,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // listar conversas
+  // LISTAR CONVERSAS
 
   if (req.method === "GET" && req.url.startsWith("/conversas/")) {
     try {
@@ -275,9 +331,15 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // rota padrao
+  // ROTA PADRÃO
 
-  enviarJSON(res, 200, { message: "Servidor rodando!" });
+  if (req.url === "/") {
+    enviarJSON(res, 200, { message: "Servidor rodando!" });
+    return;
+  }
+
+  // qualquer rota que não existe
+  enviarJSON(res, 404, { message: "Rota não encontrada." });
 });
 
 server.listen(3000, () => {
