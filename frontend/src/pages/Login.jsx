@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import "../styles/Login.css";
 import logo from "../assets/logo.png";
 import { setSession, sessaoDeUsuario } from "../services/session";
-import { autenticarEquipe } from "../services/mockUsers";
+// import { autenticarEquipe } from "../services/mockUsers";
 import { login } from "../services/authApi";
 
 function Login() {
@@ -15,25 +16,40 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // async function handleSubmit(e) {
+  //   e.preventDefault();
+  //   setErro("");
+
+  //   // matrícula e senha de prof/admin de demonstração (ainda não tem
+  //   // cadastro de equipe no banco) -> painel
+  //   const staff = autenticarEquipe(matricula, senha);
+  //   if (staff) {
+  //     setSession(staff);
+  //     navigate("/painel");
+  //     return;
+  //   }
+
+  //   // aluno de verdade, autenticado contra o banco
+  //   setEnviando(true);
+  //   try {
+  //     const usuario = await login(matricula, senha);
+  //     setSession(sessaoDeUsuario(usuario));
+  //     navigate("/home");
+  //   } catch (err) {
+  //     setErro(err.message || "Matrícula ou senha incorretos.");
+  //   } finally {
+  //     setEnviando(false);
+  //   }
+  // }
   async function handleSubmit(e) {
     e.preventDefault();
     setErro("");
-
-    // matrícula e senha de prof/admin de demonstração (ainda não tem
-    // cadastro de equipe no banco) -> painel
-    const staff = autenticarEquipe(matricula, senha);
-    if (staff) {
-      setSession(staff);
-      navigate("/painel");
-      return;
-    }
-
-    // aluno de verdade, autenticado contra o banco
     setEnviando(true);
     try {
       const usuario = await login(matricula, senha);
-      setSession(sessaoDeUsuario(usuario));
-      navigate("/home");
+      const sessao = sessaoDeUsuario(usuario);
+      setSession(sessao);
+      navigate(sessao.role === "aluno" ? "/home" : "/painel");
     } catch (err) {
       setErro(err.message || "Matrícula ou senha incorretos.");
     } finally {
@@ -84,8 +100,9 @@ function Login() {
                   type="button"
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                 >
-                  👁
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>

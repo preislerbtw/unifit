@@ -6,7 +6,17 @@ import { getSession } from "../services/session";
 
 function Perfil() {
   const navigate = useNavigate();
-  const usuario = getSession();
+
+  const dadosUsuario = getUsuario();
+
+  const usuario = {
+    nome: dadosUsuario.nome,
+    curso: dadosUsuario.curso,
+    matricula: dadosUsuario.matricula,
+    email: dadosUsuario.email,
+    peso: dadosUsuario.peso,
+    altura: dadosUsuario.altura,
+  };
 
   return (
     <div className="perfil-page">
@@ -51,15 +61,17 @@ function Perfil() {
         {usuario.altura != null && (
           <div className="dado-box">
             <span className="dado-label">Altura</span>
-            <span className="dado-valor">{Number(usuario.altura).toFixed(2)} M</span>
+            <span className="dado-valor">
+              {Number(usuario.altura).toFixed(2)} M
+            </span>
           </div>
         )}
-
-        {/* ID numérico de 4 dígitos, vindo da tabela `usuario` do banco */}
         {usuario.idUsuario != null && (
           <div className="dado-box">
             <span className="dado-label">ID do Usuário</span>
-            <span className="dado-valor">{String(usuario.idUsuario).padStart(4, "0")}</span>
+            <span className="dado-valor">
+              {String(usuario.idUsuario).padStart(4, "0")}
+            </span>
           </div>
         )}
       </div>

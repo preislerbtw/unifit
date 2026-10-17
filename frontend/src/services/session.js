@@ -1,9 +1,4 @@
-// Sessão provisória (modo demonstração).
-// Quando o login do back-end existir, o perfil virá da resposta dele (coluna
-// "perfil" da tabela usuario) e este arquivo passa a guardar o que a API devolver.
 const KEY = "unifit:session";
-
-// alunos de demonstração (nível = difficulty da ExerciseDB)
 export const DEMO_STUDENTS = [
   { userId: "aluno-1", name: "Antônio Enzo", level: "intermediate" },
   { userId: "aluno-2", name: "Maria Souza", level: "beginner" },
@@ -23,7 +18,6 @@ export function getSession() {
   } catch {
     // sessão corrompida: cai no padrão
   }
-  // login antigo, sem perfil: trata como aluno
   return { role: "aluno", ...DEMO_STUDENTS[0] };
 }
 
@@ -32,13 +26,14 @@ export function clearSession() {
   sessionStorage.removeItem("logado");
 }
 
-// Converte o usuário devolvido pela API de login (tabela `usuario`) no
-// formato de sessão que o resto do app usa (session.role, session.userId...).
+const ROLES = ["aluno", "professor", "admin"];
 export function sessaoDeUsuario(usuario) {
+  const perfil = String(usuario.perfil || "").trim().toLowerCase();
   return {
-    role: usuario.perfil || "aluno",
+    role: ROLES.includes(perfil) ? perfil : "aluno",
     userId: String(usuario.id),
     idUsuario: usuario.id,
+    professorId: usuario.professorId ?? null,
     name: usuario.nome,
     email: usuario.email,
     matricula: usuario.matricula,
