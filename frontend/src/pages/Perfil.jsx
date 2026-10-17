@@ -2,17 +2,20 @@ import "../styles/Perfil.css";
 import { CircleUserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import { getUsuario } from "../utils/auth"
 
 function Perfil() {
   const navigate = useNavigate();
 
+  const dadosUsuario = getUsuario();
+
   const usuario = {
-    nome: "Antônio Enzo",
-    curso: "Ciência da Computação",
-    matricula: "2513868",
-    email: "antonioenzo@edu.unifor.br",
-    peso: 82,
-    altura: 1.85,
+    nome: dadosUsuario.nome,
+    curso: dadosUsuario.curso,
+    matricula: dadosUsuario.matricula,
+    email: dadosUsuario.email,
+    peso: dadosUsuario.peso,
+    altura: dadosUsuario.altura,
   };
 
   return (
@@ -46,12 +49,12 @@ function Perfil() {
 
         <div className="dado-box">
           <span className="dado-label">Peso</span>
-          <span className="dado-valor">{usuario.peso} KG</span>
+          <span className="dado-valor">{usuario.peso != null ? `${usuario.peso} KG` : "Não Informado"}</span>
         </div>
 
         <div className="dado-box">
           <span className="dado-label">Altura</span>
-          <span className="dado-valor">{usuario.altura.toFixed(2)} M</span>
+          <span className="dado-valor">{usuario.altura != null ? `${usuario.altura} M` : "Não Informado"} </span>
         </div>
       </div>
     </div>

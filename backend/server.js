@@ -29,13 +29,13 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       try {
         const dados = JSON.parse(body);
-        const { nome, email, senha, data_nascimento, objetivo, nivel_experiencia, perfil, matricula, curso } = dados;
+        const { nome, email, senha, data_nascimento, objetivo, nivel_experiencia, perfil, matricula, curso, altura, peso } = dados;
 
         const senha_hash = await bcrypt.hash(senha, 10);
 
         await db.query(
-          'INSERT INTO usuario (nome, email, senha_hash, data_nascimento, objetivo, nivel_experiencia, perfil, matricula, curso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [nome, email, senha_hash, data_nascimento, objetivo, nivel_experiencia, perfil, matricula, curso]
+          'INSERT INTO usuario (nome, email, senha_hash, data_nascimento, objetivo, nivel_experiencia, perfil, matricula, curso, altura, peso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [nome, email, senha_hash, data_nascimento, objetivo, nivel_experiencia, perfil, matricula, curso, altura, peso]
         );
 
         res.writeHead(201, { 'Content-Type': 'application/json' });
