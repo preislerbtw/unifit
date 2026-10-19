@@ -3,6 +3,7 @@ const db = require("./database");
 const bcrypt = require("bcrypt");
 const { enviarJSON } = require("./src/http/resposta");
 const { lerBody } = require("./src/http/lerBody");
+const usuarioRepository = require("./src/repositories/usuarioRepository");
 
 console.log("DB_HOST:", process.env.DB_HOST);
 console.log("DB_USER:", process.env.DB_USER);
@@ -61,38 +62,18 @@ const server = http.createServer(async (req, res) => {
 
       const senha_hash = await bcrypt.hash(senha, 10);
 
-      await db.query(
-        `
-        INSERT INTO usuario
-        (
-          nome,
-          email,
-          senha_hash,
-          data_nascimento,
-          objetivo,
-          nivel_experiencia,
-          perfil,
-          matricula,
-          curso,
-          altura,
-          peso
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        [
-          nome,
-          email,
-          senha_hash,
-          data_nascimento,
-          objetivo,
-          nivel_experiencia,
-          perfil,
-          matricula,
-          curso,
-          altura,
-          peso,
-        ]
-      );
+      await usuarioRepository.criar({
+        nome,
+        email,
+        senha_hash,
+        data_nascimento,
+        objetivo,
+        nivel_experiencia,
+        matricula,
+        curso,
+        altura,
+        peso,
+      });
 
       enviarJSON(res, 201, { message: "Usuario cadastrado com sucesso!" });
     } catch (erro) {
@@ -120,28 +101,20 @@ const server = http.createServer(async (req, res) => {
     try {
       const { matricula, senha } = await lerBody(req);
 
-      const [usuario] = await db.query(
-        `
-        SELECT *
-        FROM usuario
-        WHERE matricula = ?
-        `,
-        [matricula]
-      );
+      const user = await usuarioRepository.buscarPorMatricula(matricula);
 
-      if (usuario.length === 0) {
+      if (!user) {
         enviarJSON(res, 401, { message: "Usuario ou Senha errados" });
         return;
       }
 
-      const senhaCerta = await bcrypt.compare(senha, usuario[0].senha_hash);
+      const senhaCerta = await bcrypt.compare(senha, user.senha_hash);
 
       if (!senhaCerta) {
         enviarJSON(res, 401, { message: "Usuario ou Senha errados" });
         return;
       }
 
-      const user = usuario[0];
 
       // se o usuário for professor, busca o id dele na tabela professor
       const [prof] = await db.query(
@@ -199,17 +172,9 @@ const server = http.createServer(async (req, res) => {
         enviarJSON(res, 400, { message: "Altura inválida (use entre 1,00 e 2,50 m)." });
         return;
       }
+      const linhasAlteradas = await usuarioRepository.atualizarMedidas(idUsuario, p, a);
 
-      const [resultado] = await db.query(
-        `
-        UPDATE usuario
-        SET peso = ?, altura = ?
-        WHERE idUsuario = ?
-        `,
-        [p, a, idUsuario]
-      );
-
-      if (resultado.affectedRows === 0) {
+      if (linhasAlteradas === 0) {
         enviarJSON(res, 404, { message: "Usuário não encontrado." });
         return;
       }
