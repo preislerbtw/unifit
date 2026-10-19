@@ -1,34 +1,12 @@
 const http = require("http");
 const db = require("./database");
 const bcrypt = require("bcrypt");
+const { enviarJSON } = require("./src/http/resposta");
+const { lerBody } = require("./src/http/lerBody");
 
 console.log("DB_HOST:", process.env.DB_HOST);
 console.log("DB_USER:", process.env.DB_USER);
 console.log("DB_NAME:", process.env.DB_NAME);
-
-// Helpers
-
-function enviarJSON(res, status, data) {
-  res.writeHead(status, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(data));
-}
-
-function lerBody(req) {
-  return new Promise((resolve, reject) => {
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
-    req.on("end", () => {
-      try {
-        resolve(JSON.parse(body));
-      } catch (erro) {
-        reject(erro);
-      }
-    });
-    req.on("error", reject);
-  });
-}
 
 const server = http.createServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
