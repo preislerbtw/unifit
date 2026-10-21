@@ -1,4 +1,4 @@
-const db = require("../../database");
+const db = require("../config/database");
 
 async function buscarPorMatricula(matricula) {
     const [linhas] = await db.query("SELECT * FROM usuario WHERE matricula = ?", [matricula]);
