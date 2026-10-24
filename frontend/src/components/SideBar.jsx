@@ -29,7 +29,7 @@ const STUDENT_NAV = [
   { label: "Fichas", to: "/fichas", icon: ClipboardList },
   { label: "Professores", to: "/professores", icon: GraduationCap },
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
-  { label: "Chat", to: "/chat", icon: MessageCircle},
+  { label: "Chat", to: "/chat", icon: MessageCircle },
 ];
 
 // menu do professor/admin
@@ -41,8 +41,17 @@ const STAFF_NAV = [
   { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
 ];
 
+// estrutura (sem cor/fundo/opacidade, para não conflitar com os estados)
 const SIDEBAR_LINK_BASE =
-  "flex items-center gap-3 border-none rounded-[10px] bg-transparent text-[var(--text-on-primary)] text-sm font-medium no-underline whitespace-nowrap cursor-pointer opacity-85 transition-[background,opacity] duration-200 hover:bg-white/[0.14] hover:opacity-100";
+  "flex items-center gap-3 border-none rounded-[10px] text-sm font-medium no-underline whitespace-nowrap cursor-pointer transition-[background,color,opacity] duration-200";
+
+// estado normal
+const SIDEBAR_LINK_INACTIVE =
+  "bg-transparent text-[var(--text-on-primary)] opacity-85 hover:bg-white/[0.14] hover:opacity-100";
+
+// estado ativo
+const SIDEBAR_LINK_ACTIVE =
+  "bg-[var(--bg-surface)] text-[var(--text-primary)] opacity-100";
 
 function SideBar() {
   const navigate = useNavigate();
@@ -66,8 +75,10 @@ function SideBar() {
 
   const linkClass = ({ isActive }) =>
     `${SIDEBAR_LINK_BASE} w-full px-3 py-2.5 ${collapsedLinkSize} ${
-      isActive ? "bg-[var(--bg-surface)] text-[var(--text-primary)] opacity-100" : ""
+      isActive ? SIDEBAR_LINK_ACTIVE : SIDEBAR_LINK_INACTIVE
     }`;
+
+  const buttonClass = `${SIDEBAR_LINK_BASE} ${SIDEBAR_LINK_INACTIVE} px-3 py-2.5 ${collapsedLinkSize}`;
 
   return (
     <>
@@ -149,7 +160,7 @@ function SideBar() {
           </NavLink>
 
           <button
-            className={`${SIDEBAR_LINK_BASE} w-auto self-start px-3 py-2.5 ${collapsedLinkSize}`}
+            className={`${buttonClass} w-auto self-start`}
             onClick={alternarTema}
             title={collapsed ? (temaEscuro ? "Tema claro" : "Tema escuro") : undefined}
           >
@@ -160,7 +171,7 @@ function SideBar() {
           </button>
 
           <button
-            className={`${SIDEBAR_LINK_BASE} w-full px-3 py-2.5 ${collapsedLinkSize}`}
+            className={`${buttonClass} w-full`}
             onClick={handleLogout}
             title={collapsed ? "Sair" : undefined}
           >
