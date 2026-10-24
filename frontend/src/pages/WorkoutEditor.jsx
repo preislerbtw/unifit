@@ -6,8 +6,37 @@ import { getSession } from "../services/session";
 import { getStudentOfProfessor } from "../services/studentsApi";
 import { getWorkout, saveWorkout, makeLine } from "../services/workoutsApi";
 import { levelLabel, levelRank } from "../utils/levels";
-import "../styles/Professors.css"; // botões
-import "../styles/Workouts.css";
+import {
+  PROF_BTN,
+  PROF_BTN_PRIMARY,
+  PROF_BTN_SECONDARY,
+  PROF_NOTICE,
+  MODAL_FIELD,
+  MODAL_FIELD_LABEL,
+  MODAL_FIELD_INPUT,
+  MODAL_ERROR,
+} from "../styles/professorsClasses";
+import {
+  WORKOUTS_PAGE,
+  WORKOUTS_BACK,
+  WORKOUTS_SUBTITLE,
+  WORKOUTS_EMPTY,
+  EDITOR_FORM,
+  EDITOR_FIELDS,
+  EDITOR_SECTION,
+  EDITOR_LINES,
+  EDITOR_LINE,
+  EDITOR_LINE_NAME,
+  EDITOR_LINE_NAME_SPAN,
+  ABOVE_LEVEL,
+  EDITOR_NUM,
+  EDITOR_NUM_LOAD,
+  INPUT_BOX,
+  EDITOR_LINE_ACTIONS,
+  EDITOR_LINE_ACTION_BTN,
+  EDITOR_LINE_ACTION_BTN_DANGER,
+  EDITOR_ACTIONS,
+} from "../styles/workoutsClasses";
 
 // Editor de fichas. Serve para os dois perfis:
 // - aluno:     /fichas/nova  e  /fichas/:workoutId
@@ -131,33 +160,33 @@ function WorkoutEditor() {
     });
   }
 
-  if (loading) return <p className="workouts-page">Carregando ficha...</p>;
+  if (loading) return <p className={WORKOUTS_PAGE}>Carregando ficha...</p>;
 
   const title = readOnly ? "Ficha" : workout ? "Editar ficha" : "Nova ficha";
 
   return (
-    <div className="workouts-page">
-      <Link to={backTo} className="workouts-back">
+    <div className={WORKOUTS_PAGE}>
+      <Link to={backTo} className={WORKOUTS_BACK}>
         <ArrowLeft size={16} /> Voltar
       </Link>
 
       <h1>{title}</h1>
-      <p className="workouts-subtitle">
+      <p className={WORKOUTS_SUBTITLE}>
         {isStaff ? `Aluno: ${owner.name}` : `Para: ${owner.name}`}
         {owner.level && <> · Nível: {levelLabel(owner.level)}</>}
       </p>
 
       {readOnly && (
-        <p className="professors-notice">
+        <p className={PROF_NOTICE}>
           Esta ficha foi criada por {workout.createdBy?.name}. Você pode consultá-la, mas
           não editá-la.
         </p>
       )}
 
-      <form onSubmit={handleSave} noValidate className="editor-form">
-        <div className="editor-fields">
-          <div className="modal-field">
-            <label htmlFor="w-name">Nome da ficha</label>
+      <form onSubmit={handleSave} noValidate className={EDITOR_FORM}>
+        <div className={EDITOR_FIELDS}>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="w-name" className={MODAL_FIELD_LABEL}>Nome da ficha</label>
             <input
               id="w-name"
               type="text"
@@ -168,10 +197,11 @@ function WorkoutEditor() {
                 setName(e.target.value);
                 setError("");
               }}
+              className={MODAL_FIELD_INPUT}
             />
           </div>
-          <div className="modal-field">
-            <label htmlFor="w-goal">Objetivo (opcional)</label>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="w-goal" className={MODAL_FIELD_LABEL}>Objetivo (opcional)</label>
             <input
               id="w-goal"
               type="text"
@@ -179,31 +209,32 @@ function WorkoutEditor() {
               value={goal}
               disabled={readOnly}
               onChange={(e) => setGoal(e.target.value)}
+              className={MODAL_FIELD_INPUT}
             />
           </div>
         </div>
 
-        <h2 className="editor-section">Exercícios</h2>
+        <h2 className={EDITOR_SECTION}>Exercícios</h2>
 
         {lines.length === 0 && (
-          <div className="workouts-empty">Nenhum exercício adicionado ainda.</div>
+          <div className={WORKOUTS_EMPTY}>Nenhum exercício adicionado ainda.</div>
         )}
 
-        <div className="editor-lines">
+        <div className={EDITOR_LINES}>
           {lines.map((l, index) => {
             const aboveLevel =
               owner.level && levelRank(l.difficulty) > levelRank(owner.level);
             return (
-              <div key={l.lineId} className="editor-line">
-                <div className="editor-line-name">
+              <div key={l.lineId} className={EDITOR_LINE}>
+                <div className={EDITOR_LINE_NAME}>
                   <strong>{l.name}</strong>
-                  <span>
+                  <span className={EDITOR_LINE_NAME_SPAN}>
                     {levelLabel(l.difficulty)}
-                    {aboveLevel && <em className="above-level"> · acima do nível do aluno</em>}
+                    {aboveLevel && <em className={ABOVE_LEVEL}> · acima do nível do aluno</em>}
                   </span>
                 </div>
 
-                <label className="editor-num">
+                <label className={EDITOR_NUM}>
                   Séries
                   <input
                     type="number"
@@ -211,9 +242,10 @@ function WorkoutEditor() {
                     value={l.sets}
                     disabled={readOnly}
                     onChange={(e) => updateLine(l.lineId, "sets", e.target.value)}
+                    className={INPUT_BOX}
                   />
                 </label>
-                <label className="editor-num">
+                <label className={EDITOR_NUM}>
                   Reps
                   <input
                     type="number"
@@ -221,9 +253,10 @@ function WorkoutEditor() {
                     value={l.reps}
                     disabled={readOnly}
                     onChange={(e) => updateLine(l.lineId, "reps", e.target.value)}
+                    className={INPUT_BOX}
                   />
                 </label>
-                <label className="editor-num editor-load">
+                <label className={`${EDITOR_NUM} ${EDITOR_NUM_LOAD}`}>
                   Carga
                   <input
                     type="text"
@@ -231,18 +264,36 @@ function WorkoutEditor() {
                     value={l.load}
                     disabled={readOnly}
                     onChange={(e) => updateLine(l.lineId, "load", e.target.value)}
+                    className={INPUT_BOX}
                   />
                 </label>
 
                 {!readOnly && (
-                  <div className="editor-line-actions">
-                    <button type="button" onClick={() => moveLine(index, -1)} disabled={index === 0} aria-label="Subir">
+                  <div className={EDITOR_LINE_ACTIONS}>
+                    <button
+                      type="button"
+                      className={EDITOR_LINE_ACTION_BTN}
+                      onClick={() => moveLine(index, -1)}
+                      disabled={index === 0}
+                      aria-label="Subir"
+                    >
                       <ChevronUp size={16} />
                     </button>
-                    <button type="button" onClick={() => moveLine(index, 1)} disabled={index === lines.length - 1} aria-label="Descer">
+                    <button
+                      type="button"
+                      className={EDITOR_LINE_ACTION_BTN}
+                      onClick={() => moveLine(index, 1)}
+                      disabled={index === lines.length - 1}
+                      aria-label="Descer"
+                    >
                       <ChevronDown size={16} />
                     </button>
-                    <button type="button" onClick={() => removeLine(l.lineId)} aria-label={`Remover ${l.name}`}>
+                    <button
+                      type="button"
+                      className={`${EDITOR_LINE_ACTION_BTN} ${EDITOR_LINE_ACTION_BTN_DANGER}`}
+                      onClick={() => removeLine(l.lineId)}
+                      aria-label={`Remover ${l.name}`}
+                    >
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -252,14 +303,18 @@ function WorkoutEditor() {
           })}
         </div>
 
-        {error && <p className="modal-error">{error}</p>}
+        {error && <p className={MODAL_ERROR}>{error}</p>}
 
         {!readOnly && (
-          <div className="editor-actions">
-            <button type="button" className="prof-btn prof-btn-secondary" onClick={() => setPickerOpen(true)}>
+          <div className={EDITOR_ACTIONS}>
+            <button
+              type="button"
+              className={`${PROF_BTN} ${PROF_BTN_SECONDARY} flex-none`}
+              onClick={() => setPickerOpen(true)}
+            >
               <Plus size={16} /> Adicionar exercício
             </button>
-            <button type="submit" className="prof-btn prof-btn-primary" disabled={saving}>
+            <button type="submit" className={`${PROF_BTN} ${PROF_BTN_PRIMARY} flex-none`} disabled={saving}>
               Salvar ficha
             </button>
           </div>

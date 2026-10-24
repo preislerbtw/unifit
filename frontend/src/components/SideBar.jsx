@@ -21,7 +21,6 @@ import {
 import { useTheme } from "../hooks/useTheme";
 import { getSession, clearSession } from "../services/session";
 import logo from "../assets/logo.png";
-import "../styles/SideBar.css";
 
 // menu do aluno
 const STUDENT_NAV = [
@@ -42,6 +41,9 @@ const STAFF_NAV = [
   { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
 ];
 
+const SIDEBAR_LINK_BASE =
+  "flex items-center gap-3 border-none rounded-[10px] bg-transparent text-[var(--text-on-primary)] text-sm font-medium no-underline whitespace-nowrap cursor-pointer opacity-85 transition-[background,opacity] duration-200 hover:bg-white/[0.14] hover:opacity-100";
+
 function SideBar() {
   const navigate = useNavigate();
   const { tema, alternarTema } = useTheme();
@@ -58,16 +60,20 @@ function SideBar() {
     navigate("/", { replace: true });
   };
 
-  const linkClass = ({ isActive }) =>
-    isActive ? "sidebar-link active" : "sidebar-link";
-
   const temaEscuro = tema === "dark";
+  const hideLabel = collapsed ? "md:hidden" : "";
+  const collapsedLinkSize = collapsed ? "md:w-11 md:h-11 md:p-0 md:justify-center" : "";
+
+  const linkClass = ({ isActive }) =>
+    `${SIDEBAR_LINK_BASE} w-full px-3 py-2.5 ${collapsedLinkSize} ${
+      isActive ? "bg-[var(--bg-surface)] text-[var(--text-primary)] opacity-100" : ""
+    }`;
 
   return (
     <>
       {/* botão de menu (aparece só no mobile) */}
       <button
-        className="sidebar-mobile-btn"
+        className="grid md:hidden place-items-center fixed top-3 left-3 w-10 h-10 border-none rounded-[10px] bg-[var(--primary)] text-[var(--text-on-primary)] cursor-pointer z-[100] shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
         onClick={() => setMobileOpen(true)}
         aria-label="Abrir menu"
       >
@@ -75,20 +81,33 @@ function SideBar() {
       </button>
 
       {/* fundo escurecido atrás da gaveta (mobile) */}
-      {mobileOpen && <div className="sidebar-overlay" onClick={closeMobile} />}
+      {mobileOpen && (
+        <div
+          className="hidden max-md:block fixed inset-0 bg-black/45 z-[150]"
+          onClick={closeMobile}
+        />
+      )}
 
       <aside
-        className={`sidebar ${collapsed ? "is-collapsed" : ""} ${
-          mobileOpen ? "is-open" : ""
-        }`}
+        className={`flex flex-col gap-1 py-4 px-3 h-screen shrink-0 overflow-hidden z-[200] bg-[var(--sidebar-bg)] text-[var(--text-on-primary)] sticky top-0 w-60 transition-[width] duration-[250ms] ease-in-out max-md:fixed max-md:top-0 max-md:left-0 max-md:transition-transform max-md:duration-[250ms] max-md:ease-in-out ${
+          mobileOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full"
+        } ${collapsed ? "md:w-[72px] md:items-center" : ""}`}
       >
-        <div className="sidebar-header">
-          <div className="sidebar-brand">
-            <img src={logo} alt="UniFit" className="sidebar-logo" />
-            <span className="sidebar-title sidebar-label">UniFit</span>
+        <div
+          className={`flex items-center justify-between gap-2 mb-4 min-h-9 ${
+            collapsed ? "md:flex-col md:gap-3" : ""
+          }`}
+        >
+          <div
+            className={`flex items-center gap-2.5 pl-2 whitespace-nowrap ${
+              collapsed ? "md:pl-0" : ""
+            }`}
+          >
+            <img src={logo} alt="UniFit" className="h-7 w-auto brightness-0 invert" />
+            <span className={`font-bold text-lg ${hideLabel}`}>UniFit</span>
           </div>
           <button
-            className="sidebar-toggle"
+            className="hidden md:grid place-items-center w-7 h-7 shrink-0 border-none rounded-full bg-white/[0.18] text-[var(--text-on-primary)] cursor-pointer hover:bg-white/30"
             onClick={() => setCollapsed((c) => !c)}
             aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
           >
@@ -96,8 +115,10 @@ function SideBar() {
           </button>
         </div>
 
-        <span className="sidebar-section sidebar-label">Navegação</span>
-        <nav className="sidebar-nav">
+        <span className={`mx-3 mt-2 mb-1 text-[11px] tracking-[0.1em] uppercase opacity-65 whitespace-nowrap ${hideLabel}`}>
+          Navegação
+        </span>
+        <nav className={`flex flex-col gap-1 ${collapsed ? "md:items-center" : ""}`}>
           {navItems.map(({ label, to, icon: Icon }) => (
             <NavLink
               key={to}
@@ -106,14 +127,16 @@ function SideBar() {
               title={collapsed ? label : undefined}
               onClick={closeMobile}
             >
-              <Icon size={18} />
-              <span className="sidebar-label">{label}</span>
+              <Icon size={18} className="shrink-0" />
+              <span className={`whitespace-nowrap ${hideLabel}`}>{label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <span className="sidebar-section sidebar-label">Conta</span>
+        <div className={`flex flex-col gap-1 mt-auto ${collapsed ? "md:items-center" : ""}`}>
+          <span className={`mx-3 mt-2 mb-1 text-[11px] tracking-[0.1em] uppercase opacity-65 whitespace-nowrap ${hideLabel}`}>
+            Conta
+          </span>
 
           <NavLink
             to="/Perfil"
@@ -121,28 +144,28 @@ function SideBar() {
             title={collapsed ? "Perfil" : undefined}
             onClick={closeMobile}
           >
-            <CircleUserRound size={18} />
-            <span className="sidebar-label">Perfil</span>
+            <CircleUserRound size={18} className="shrink-0" />
+            <span className={`whitespace-nowrap ${hideLabel}`}>Perfil</span>
           </NavLink>
 
           <button
-            className="sidebar-link"
+            className={`${SIDEBAR_LINK_BASE} w-auto self-start px-3 py-2.5 ${collapsedLinkSize}`}
             onClick={alternarTema}
             title={collapsed ? (temaEscuro ? "Tema claro" : "Tema escuro") : undefined}
           >
-            {temaEscuro ? <Sun size={18} /> : <Moon size={18} />}
-            <span className="sidebar-label">
+            {temaEscuro ? <Sun size={18} className="shrink-0" /> : <Moon size={18} className="shrink-0" />}
+            <span className={`whitespace-nowrap ${hideLabel}`}>
               {temaEscuro ? "Tema Claro" : "Tema Escuro"}
             </span>
           </button>
 
           <button
-            className="sidebar-link"
+            className={`${SIDEBAR_LINK_BASE} w-full px-3 py-2.5 ${collapsedLinkSize}`}
             onClick={handleLogout}
             title={collapsed ? "Sair" : undefined}
           >
-            <LogOut size={18} />
-            <span className="sidebar-label">Sair</span>
+            <LogOut size={18} className="shrink-0" />
+            <span className={`whitespace-nowrap ${hideLabel}`}>Sair</span>
           </button>
         </div>
       </aside>

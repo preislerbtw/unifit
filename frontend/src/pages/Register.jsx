@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import "../styles/Login.css";
-import "../styles/Register.css";
 import logo from "../assets/logo.png";
+import banner from "../assets/foto_unifor.jpg";
 import { cadastrar } from "../services/authApi";
 
 const inicial = {
@@ -14,6 +13,9 @@ const inicial = {
   senha: "",
   confirmar: "",
 };
+
+const INPUT_CLASS =
+  "w-full px-3.5 py-3 border border-[var(--border)] rounded-lg text-sm box-border focus:outline-none focus:border-[var(--text-primary)]";
 
 function validar(v) {
   const erros = {};
@@ -42,10 +44,10 @@ function validar(v) {
 
 function Campo({ label, erro, children }) {
   return (
-    <div className="login-field">
-      <label>{label}</label>
+    <div className="mb-5">
+      <label className="block text-sm font-semibold mb-1.5">{label}</label>
       {children}
-      {erro && <span className="campo-erro">{erro}</span>}
+      {erro && <span className="block mt-1.5 text-xs text-[var(--text-danger)]">{erro}</span>}
     </div>
   );
 }
@@ -94,17 +96,24 @@ function Register() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-banner">
-        <img src={logo} alt="UniFit" className="login-banner-logo" />
+    <div className="flex relative min-h-screen w-full">
+      <div
+        className="flex-[1.5] relative min-h-screen bg-cover bg-center max-[900px]:hidden before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-br before:from-[rgba(15,40,120,0.75)] before:to-[rgba(30,90,220,0.55)]"
+        style={{ backgroundImage: `url(${banner})` }}
+      >
+        <img src={logo} alt="UniFit" className="relative z-[1] h-[50px] w-auto m-8 brightness-0 invert" />
       </div>
 
-      <div className="login-form-side">
-        <div className="login-card">
-          <h1 className="login-title">Crie sua conta UniFit</h1>
-          <p className="login-subtitle">Preencha seus dados para começar</p>
+      <div className="flex-1 flex items-center justify-center bg-[var(--bg-page)] p-5">
+        <div className="bg-[var(--bg-surface)] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] p-12 py-10 w-full max-w-[480px] max-[520px]:p-8 max-[520px]:px-6">
+          <h1 className="text-center text-[22px] font-bold mb-1.5">Crie sua conta UniFit</h1>
+          <p className="text-center text-[var(--text-muted)] text-sm mb-8">Preencha seus dados para começar</p>
 
-          {erros.geral && <p className="login-erro">{erros.geral}</p>}
+          {erros.geral && (
+            <p className="mb-5 px-3.5 py-2.5 rounded-lg bg-[var(--bg-danger)] text-[var(--text-danger)] text-sm text-center">
+              {erros.geral}
+            </p>
+          )}
 
           <form onSubmit={handleSubmit} noValidate>
             <Campo label="Nome completo" erro={erros.nome}>
@@ -114,10 +123,11 @@ function Register() {
                 placeholder="Seu Nome Completo"
                 value={valores.nome}
                 onChange={handleChange}
+                className={INPUT_CLASS}
               />
             </Campo>
 
-            <div className="cadastro-row">
+            <div className="grid grid-cols-2 gap-4 max-[520px]:grid-cols-1">
               <Campo label="Matrícula" erro={erros.matricula}>
                 <input
                   type="text"
@@ -126,6 +136,7 @@ function Register() {
                   placeholder="Matrícula"
                   value={valores.matricula}
                   onChange={handleChange}
+                  className={INPUT_CLASS}
                 />
               </Campo>
 
@@ -136,6 +147,7 @@ function Register() {
                   placeholder="Ex: Direito"
                   value={valores.curso}
                   onChange={handleChange}
+                  className={INPUT_CLASS}
                 />
               </Campo>
             </div>
@@ -147,21 +159,23 @@ function Register() {
                 placeholder="seunome@edu.unifor.br"
                 value={valores.email}
                 onChange={handleChange}
+                className={INPUT_CLASS}
               />
             </Campo>
 
             <Campo label="Senha" erro={erros.senha}>
-              <div className="password-wrapper">
+              <div className="relative">
                 <input
                   type={mostrarSenha ? "text" : "password"}
                   name="senha"
                   placeholder="Sua Senha"
                   value={valores.senha}
                   onChange={handleChange}
+                  className={INPUT_CLASS}
                 />
                 <button
                   type="button"
-                  className="toggle-password"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer flex items-center"
                   onClick={() => setMostrarSenha((m) => !m)}
                   aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
                 >
@@ -177,21 +191,33 @@ function Register() {
                 placeholder="Repita a Senha"
                 value={valores.confirmar}
                 onChange={handleChange}
+                className={INPUT_CLASS}
               />
             </Campo>
 
-            <button type="submit" className="login-button" disabled={enviando}>
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-[var(--primary-hover)] text-[var(--text-on-primary)] border-none rounded-lg text-[15px] font-semibold cursor-pointer transition-all duration-[400ms] ease-in-out hover:brightness-[0.7]"
+              disabled={enviando}
+            >
               {enviando ? "Criando conta..." : "Criar conta"}
             </button>
           </form>
 
-          <p className="login-cadastro">
-            Já tem conta?  <Link to="/"><span className="entrar"> Entrar</span></Link>
+          <p className="mt-5 text-center text-sm text-[var(--text-muted)]">
+            Já tem conta?{" "}
+            <Link to="/" className="text-[var(--text-primary)] font-semibold no-underline">
+              <span className="inline-block transition-[filter,transform] duration-[400ms] ease-in-out hover:brightness-[0.7] hover:font-bold hover:scale-[1.03]">
+                {" "}Entrar
+              </span>
+            </Link>
           </p>
         </div>
       </div>
 
-      <p className="login-footer">Fundação Edson Queiroz | UniFit</p>
+      <p className="absolute bottom-5 left-10 text-[var(--text-on-primary)] text-[13px] max-[900px]:text-[var(--text-muted)] max-[900px]:left-5">
+        Fundação Edson Queiroz | UniFit
+      </p>
     </div>
   );
 }

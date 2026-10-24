@@ -3,8 +3,30 @@ import { X, Search } from "lucide-react";
 import { getPopularExercises, searchCatalog } from "../services/catalogApi";
 import { levelLabel, levelRank } from "../utils/levels";
 import { trBodyPart, trEquipment } from "../utils/translations";
-import "../styles/Professors.css"; // usa o modal e os botões desta folha
-import "../styles/Workouts.css";
+import {
+  MODAL_OVERLAY,
+  MODAL_CARD,
+  MODAL_CLOSE,
+  MODAL_FIELD,
+  MODAL_FIELD_LABEL,
+  MODAL_FIELD_INPUT,
+  MODAL_ERROR,
+  MODAL_ACTIONS,
+  PROF_BTN,
+  PROF_BTN_PRIMARY,
+  PROF_BTN_SECONDARY,
+} from "../styles/professorsClasses";
+import {
+  PICKER_CARD,
+  PICKER_SEARCH,
+  PICKER_SEARCH_INPUT,
+  PICKER_STATUS,
+  PICKER_LIST,
+  PICKER_ITEM,
+  PICKER_ITEM_INFO,
+  PICKER_ITEM_SPAN,
+  PICKER_ITEM_BTN_EXTRA,
+} from "../styles/workoutsClasses";
 
 // Seletor de exercícios para montar fichas.
 // studentLevel: nível do aluno (para sugerir só exercícios adequados)
@@ -63,21 +85,21 @@ function ExercisePicker({ studentLevel, existingIds, onAdd, onClose }) {
     .slice(0, 40);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={MODAL_OVERLAY} onClick={onClose}>
       <div
-        className="modal-card picker-card"
+        className={`${MODAL_CARD} ${PICKER_CARD}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="picker-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="modal-close" onClick={onClose} aria-label="Fechar">
+        <button className={MODAL_CLOSE} onClick={onClose} aria-label="Fechar">
           <X size={18} />
         </button>
 
         <h2 id="picker-title">Adicionar exercício</h2>
 
-        <div className="picker-search">
+        <div className={PICKER_SEARCH}>
           <Search size={16} />
           <input
             type="text"
@@ -85,16 +107,18 @@ function ExercisePicker({ studentLevel, existingIds, onAdd, onClose }) {
             value={term}
             onChange={(e) => setTerm(e.target.value)}
             autoFocus
+            className={PICKER_SEARCH_INPUT}
           />
         </div>
 
         {studentLevel && (
-          <div className="modal-field">
-            <label htmlFor="picker-level">Nível dos exercícios</label>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="picker-level" className={MODAL_FIELD_LABEL}>Nível dos exercícios</label>
             <select
               id="picker-level"
               value={levelMode}
               onChange={(e) => setLevelMode(e.target.value)}
+              className={MODAL_FIELD_INPUT}
             >
               <option value="fit">
                 Adequados ao aluno (até {levelLabel(studentLevel)})
@@ -104,27 +128,27 @@ function ExercisePicker({ studentLevel, existingIds, onAdd, onClose }) {
           </div>
         )}
 
-        {error && <p className="modal-error">{error}</p>}
-        {loading && <p className="picker-status">Carregando...</p>}
+        {error && <p className={MODAL_ERROR}>{error}</p>}
+        {loading && <p className={PICKER_STATUS}>Carregando...</p>}
         {!loading && list.length === 0 && !error && (
-          <p className="picker-status">Nenhum exercício encontrado.</p>
+          <p className={PICKER_STATUS}>Nenhum exercício encontrado.</p>
         )}
 
-        <ul className="picker-list">
+        <ul className={PICKER_LIST}>
           {list.map((ex) => {
             const added = existingIds.includes(ex.id);
             return (
-              <li key={ex.id} className="picker-item">
-                <div>
+              <li key={ex.id} className={PICKER_ITEM}>
+                <div className={PICKER_ITEM_INFO}>
                   <strong>{ex.name}</strong>
-                  <span>
+                  <span className={PICKER_ITEM_SPAN}>
                     {trBodyPart(ex.bodyPart)} · {trEquipment(ex.equipment)} ·{" "}
                     {levelLabel(ex.difficulty)}
                   </span>
                 </div>
                 <button
                   type="button"
-                  className="prof-btn prof-btn-primary"
+                  className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${PICKER_ITEM_BTN_EXTRA}`}
                   disabled={added}
                   onClick={() => onAdd(ex)}
                 >
@@ -135,8 +159,8 @@ function ExercisePicker({ studentLevel, existingIds, onAdd, onClose }) {
           })}
         </ul>
 
-        <div className="modal-actions">
-          <button type="button" className="prof-btn prof-btn-secondary" onClick={onClose}>
+        <div className={MODAL_ACTIONS}>
+          <button type="button" className={`${PROF_BTN} ${PROF_BTN_SECONDARY}`} onClick={onClose}>
             Concluir
           </button>
         </div>

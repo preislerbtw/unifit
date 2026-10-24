@@ -16,17 +16,23 @@ function ExerciseDemo({ images, alt, intervalo = 900 }) {
   }, [chave, intervalo]);
 
   if (!images.length || falhou) {
-    return <div className="exercise-media-placeholder">Demonstração indisponível</div>;
+    return (
+      <div className="w-full max-w-[420px] aspect-square rounded-xl bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-muted)] text-base mx-auto max-md:max-w-full">
+        Demonstração indisponível
+      </div>
+    );
   }
 
   return (
-    <div className="exercise-demo">
+    <div className="relative w-full max-w-[420px] aspect-square mx-auto max-md:max-w-full">
       {images.map((src, i) => (
         <img
           key={src}
           src={src}
           alt={i === 0 ? alt : ""}
-          className={i === frame ? "is-active" : ""}
+          className={`absolute inset-0 w-full h-full object-contain bg-[var(--bg-surface)] rounded-xl transition-opacity duration-[400ms] ease-in-out ${
+            i === frame ? "opacity-100" : "opacity-0"
+          }`}
           onError={() => setFalhou(true)}
         />
       ))}

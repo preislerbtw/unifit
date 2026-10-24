@@ -4,7 +4,25 @@ import { Search, CalendarPlus, MessageCircle, MapPin } from "lucide-react";
 import AppointmentModal from "../components/AppointmentModal";
 import { listarProfessores } from "../services/professoresApi";
 import { createAppointment } from "../services/appointmentsApi";
-import "../styles/Professors.css";
+import {
+  PROF_PAGE,
+  PROF_SUBTITLE,
+  PROF_SEARCH,
+  PROF_SEARCH_INPUT,
+  PROF_NOTICE,
+  PROF_GRID,
+  PROFESSOR_CARD,
+  PROFESSOR_HEADER,
+  PROFESSOR_HEADER_H3,
+  PROFESSOR_AVATAR,
+  PROFESSOR_TAG,
+  PROFESSOR_GYM,
+  PROFESSOR_BIO,
+  PROFESSOR_ACTIONS,
+  PROF_BTN,
+  PROF_BTN_PRIMARY,
+  PROF_BTN_SECONDARY,
+} from "../styles/professorsClasses";
 
 // ex: "profa. ana beatriz lima" -> "AL"
 function iniciais(nome) {
@@ -81,25 +99,26 @@ function Professors() {
   }
 
   return (
-    <div className="professors-page">
-      <h1>Professores</h1>
-      <p className="professors-subtitle">
+    <div className={PROF_PAGE}>
+      <h1 className="mb-1">Professores</h1>
+      <p className={PROF_SUBTITLE}>
         Conheça os professores, agende uma avaliação física ou aula e converse
         com eles.
       </p>
 
-      <div className="professors-search">
+      <div className={PROF_SEARCH}>
         <Search size={18} />
         <input
           type="text"
           placeholder="Buscar por nome ou especialidade"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
+          className={PROF_SEARCH_INPUT}
         />
       </div>
 
       {aviso && (
-        <p className="professors-notice" role="status">
+        <p className={PROF_NOTICE} role="status">
           {aviso}
         </p>
       )}
@@ -107,34 +126,34 @@ function Professors() {
       {carregando && <p>Carregando professores...</p>}
 
       {!carregando && (
-        <div className="professors-grid">
+        <div className={PROF_GRID}>
           {filtrados.length > 0 ? (
             filtrados.map((p) => (
-              <article key={p.id} className="professor-card">
-                <div className="professor-header">
-                  <div className="professor-avatar" aria-hidden="true">
+              <article key={p.id} className={PROFESSOR_CARD}>
+                <div className={PROFESSOR_HEADER}>
+                  <div className={PROFESSOR_AVATAR} aria-hidden="true">
                     {iniciais(p.nome)}
                   </div>
                   <div>
-                    <h3>{p.nome}</h3>
-                    <span className="professor-tag">{p.especialidade}</span>
+                    <h3 className={PROFESSOR_HEADER_H3}>{p.nome}</h3>
+                    <span className={PROFESSOR_TAG}>{p.especialidade}</span>
                   </div>
                 </div>
 
-                <p className="professor-gym">
+                <p className={PROFESSOR_GYM}>
                   <MapPin size={14} /> {p.academia}
                 </p>
-                <p className="professor-bio">{p.bio}</p>
+                <p className={PROFESSOR_BIO}>{p.bio}</p>
 
-                <div className="professor-actions">
+                <div className={PROFESSOR_ACTIONS}>
                   <button
-                    className="prof-btn prof-btn-primary"
+                    className={`${PROF_BTN} ${PROF_BTN_PRIMARY}`}
                     onClick={() => setSelecionado(p)}
                   >
                     <CalendarPlus size={16} /> Agendar
                   </button>
                   <button
-                    className="prof-btn prof-btn-secondary"
+                    className={`${PROF_BTN} ${PROF_BTN_SECONDARY}`}
                     onClick={() => conversar(p)}
                   >
                     <MessageCircle size={16} /> Conversar

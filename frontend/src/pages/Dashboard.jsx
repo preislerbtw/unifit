@@ -12,8 +12,28 @@ import { listAppointments } from "../services/appointmentsApi";
 import { listWorkouts } from "../services/workoutsApi";
 import { getSession } from "../services/session";
 import { toDate, todayISO, dateParts } from "../utils/appointmentDate";
-import "../styles/Schedule.css";
-import "../styles/Dashboard.css";
+import {
+  DASHBOARD_PAGE,
+  DASHBOARD_SUBTITLE,
+  DASHBOARD_SECTION,
+  STAT_GRID,
+  STAT_CARD,
+  STAT_CARD_STRONG,
+  STAT_CARD_SPAN,
+  STAT_CARD_LINK_HOVER,
+  STAT_TITLE,
+  DASHBOARD_LIST,
+  DASHBOARD_ROW,
+  DASHBOARD_ROW_H3,
+  DASHBOARD_ROW_P,
+  DASHBOARD_EMPTY,
+} from "../styles/dashboardClasses";
+import {
+  APPOINTMENT_DATE,
+  APPOINTMENT_DATE_STRONG,
+  APPOINTMENT_DATE_SPAN,
+  APPOINTMENT_WEEKDAY,
+} from "../styles/scheduleClasses";
 
 function Dashboard() {
   const [session] = useState(getSession);
@@ -92,49 +112,49 @@ function Dashboard() {
   ];
 
   return (
-    <div className="dashboard-page">
+    <div className={DASHBOARD_PAGE}>
       <h1>Painel</h1>
-      <p className="dashboard-subtitle">
+      <p className={DASHBOARD_SUBTITLE}>
         Olá, {session.name}! Acompanhe seus atendimentos e alunos.
       </p>
 
-      <div className="stat-grid">
+      <div className={STAT_GRID}>
         {cards.map(({ label, value, icon: Icon, to }) => {
           const content = (
             <>
               <Icon size={22} />
-              <strong>{value}</strong>
-              <span>{label}</span>
+              <strong className={STAT_CARD_STRONG}>{value}</strong>
+              <span className={STAT_CARD_SPAN}>{label}</span>
             </>
           );
           return to ? (
-            <Link key={label} to={to} className="stat-card is-link">
+            <Link key={label} to={to} className={`${STAT_CARD} ${STAT_CARD_LINK_HOVER}`}>
               {content}
             </Link>
           ) : (
-            <div key={label} className="stat-card">
+            <div key={label} className={STAT_CARD}>
               {content}
             </div>
           );
         })}
       </div>
 
-      <h2 className="dashboard-section">Próximos atendimentos</h2>
+      <h2 className={DASHBOARD_SECTION}>Próximos atendimentos</h2>
       {stats.upcoming.length > 0 ? (
-        <div className="dashboard-list">
+        <div className={DASHBOARD_LIST}>
           {stats.upcoming.slice(0, 5).map((a) => {
             const { day, month, weekday } = dateParts(a);
             return (
-              <div key={a.id} className="dashboard-row">
-                <div className="appointment-date" aria-hidden="true">
-                  <strong>{day}</strong>
-                  <span>{month}</span>
+              <div key={a.id} className={DASHBOARD_ROW}>
+                <div className={APPOINTMENT_DATE} aria-hidden="true">
+                  <strong className={APPOINTMENT_DATE_STRONG}>{day}</strong>
+                  <span className={APPOINTMENT_DATE_SPAN}>{month}</span>
                 </div>
                 <div>
-                  <h3>{a.studentName}</h3>
-                  <p>
+                  <h3 className={DASHBOARD_ROW_H3}>{a.studentName}</h3>
+                  <p className={DASHBOARD_ROW_P}>
                     {a.type} ·{" "}
-                    <span className="appointment-weekday">{weekday}</span> às{" "}
+                    <span className={APPOINTMENT_WEEKDAY}>{weekday}</span> às{" "}
                     {a.time}
                   </p>
                 </div>
@@ -143,23 +163,23 @@ function Dashboard() {
           })}
         </div>
       ) : (
-        <div className="dashboard-empty">
+        <div className={DASHBOARD_EMPTY}>
           Nenhum atendimento confirmado por enquanto.
         </div>
       )}
 
-      <h2 className="dashboard-section">Atalhos</h2>
-      <div className="stat-grid">
-        <Link to="/alunos" className="stat-card is-link">
+      <h2 className={DASHBOARD_SECTION}>Atalhos</h2>
+      <div className={STAT_GRID}>
+        <Link to="/alunos" className={`${STAT_CARD} ${STAT_CARD_LINK_HOVER}`}>
           <Users size={22} />
-          <strong className="stat-title">Alunos e fichas</strong>
-          <span>Crie fichas de acordo com o nível de cada aluno</span>
+          <strong className={STAT_TITLE}>Alunos e fichas</strong>
+          <span className={STAT_CARD_SPAN}>Crie fichas de acordo com o nível de cada aluno</span>
         </Link>
         {session.role === "professor" && (
-          <Link to="/chat" className="stat-card is-link">
+          <Link to="/chat" className={`${STAT_CARD} ${STAT_CARD_LINK_HOVER}`}>
             <MessageCircle size={22} />
-            <strong className="stat-title">Chat</strong>
-            <span>Converse com seus alunos</span>
+            <strong className={STAT_TITLE}>Chat</strong>
+            <span className={STAT_CARD_SPAN}>Converse com seus alunos</span>
           </Link>
         )}
       </div>

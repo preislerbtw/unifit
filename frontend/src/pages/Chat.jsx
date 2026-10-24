@@ -13,7 +13,7 @@ import {
   subscribeChat,
 } from "../services/chatApi";
 import { levelLabel } from "../utils/levels";
-import "../styles/Chat.css";
+import { PROF_BTN, PROF_BTN_PRIMARY } from "../styles/professorsClasses";
 
 function time(iso) {
   return new Date(iso).toLocaleTimeString("pt-BR", {
@@ -126,14 +126,21 @@ function Chat() {
     setText("");
   }
 
-  return (
-    <div className="chat-page">
-      <h1>Chat</h1>
+  const hasThread = Boolean(partnerId);
 
-      <div className={`chat-layout ${partnerId ? "has-thread" : ""}`}>
-        <aside className="chat-list" aria-label="Conversas">
+  return (
+    <div className="flex-1 flex flex-col h-screen box-border px-10 pt-7 pb-6 bg-[var(--bg-page)] text-[var(--text)] max-md:px-4 max-md:pt-[72px] max-md:pb-4">
+      <h1 className="mb-4">Chat</h1>
+
+      <div className="flex-1 min-h-0 grid grid-cols-[300px_1fr] max-md:grid-cols-1 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-[14px] overflow-hidden">
+        <aside
+          className={`flex flex-col overflow-y-auto border-r border-[var(--border-subtle)] ${
+            hasThread ? "max-md:hidden" : ""
+          }`}
+          aria-label="Conversas"
+        >
           {contacts.length === 0 && (
-            <p className="chat-empty">
+            <p className="p-6 text-center text-sm text-[var(--text-muted)]">
               {isStudent
                 ? "Nenhum professor disponível."
                 : "Você ainda não tem alunos para conversar. Aceite uma solicitação primeiro."}
@@ -143,65 +150,74 @@ function Chat() {
             <Link
               key={c.id}
               to={`/chat/${c.id}`}
-              className={`chat-contact ${c.id === partnerId ? "is-active" : ""}`}
+              className={`flex flex-col gap-0.5 px-4 py-3.5 border-b border-[var(--border-subtle)] text-[var(--text)] no-underline hover:bg-[var(--bg-hover)] ${
+                c.id === partnerId ? "bg-[var(--bg-primary-soft)]" : ""
+              }`}
             >
               <strong>{c.name}</strong>
-              <span>{c.last ? c.last.text : c.subtitle}</span>
+              <span className="overflow-hidden text-[13px] text-[var(--text-muted)] text-ellipsis whitespace-nowrap">
+                {c.last ? c.last.text : c.subtitle}
+              </span>
             </Link>
           ))}
         </aside>
 
-        <section className="chat-thread">
+        <section className={`flex flex-col min-w-0 min-h-0 ${!hasThread ? "max-md:hidden" : ""}`}>
           {!partner ? (
-            <div className="chat-placeholder">
+            <div className="m-auto p-6 text-center text-sm text-[var(--text-muted)]">
               Selecione uma conversa para começar.
             </div>
           ) : (
             <>
-              <header className="chat-thread-header">
+              <header className="flex items-center gap-3 px-[18px] py-3.5 border-b border-[var(--border-subtle)]">
                 <button
                   type="button"
-                  className="chat-back"
+                  className="hidden max-md:grid place-items-center w-[34px] h-[34px] border-none rounded-lg bg-[var(--bg-muted)] text-[var(--text)] cursor-pointer"
                   onClick={() => navigate("/chat")}
                   aria-label="Voltar para as conversas"
                 >
                   <ArrowLeft size={18} />
                 </button>
-                <div>
+                <div className="flex flex-col">
                   <strong>{partner.name}</strong>
-                  <span>{partner.subtitle}</span>
+                  <span className="text-[13px] text-[var(--text-muted)]">{partner.subtitle}</span>
                 </div>
               </header>
 
-              <div className="chat-messages">
+              <div className="flex-1 min-h-0 flex flex-col gap-2 p-[18px] overflow-y-auto">
                 {messages.length === 0 && (
-                  <p className="chat-empty">
+                  <p className="p-6 text-center text-sm text-[var(--text-muted)]">
                     Nenhuma mensagem ainda. Diga olá!
                   </p>
                 )}
                 {messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`chat-bubble ${m.from.id === session.userId ? "is-mine" : ""}`}
+                    className={`self-start max-w-[70%] px-3 py-2 rounded-[14px_14px_14px_4px] bg-[var(--bg-muted)] text-[var(--text)] max-md:max-w-[85%] ${
+                      m.from.id === session.userId
+                        ? "self-end !rounded-[14px_14px_4px_14px] !bg-[var(--primary)] !text-[var(--text-on-primary)]"
+                        : ""
+                    }`}
                   >
-                    <p>{m.text}</p>
-                    <span>{time(m.sentAt)}</span>
+                    <p className="[overflow-wrap:anywhere] text-sm">{m.text}</p>
+                    <span className="block mt-0.5 text-[11px] opacity-70 text-right">{time(m.sentAt)}</span>
                   </div>
                 ))}
                 <div ref={endRef} />
               </div>
 
-              <form className="chat-form" onSubmit={handleSend}>
+              <form className="flex gap-2.5 px-4 py-3 border-t border-[var(--border-subtle)]" onSubmit={handleSend}>
                 <input
                   type="text"
                   placeholder="Digite sua mensagem"
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   aria-label="Mensagem"
+                  className="flex-1 px-3.5 py-[11px] border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] text-[var(--text)] text-sm focus:outline-none focus:border-[var(--primary)]"
                 />
                 <button
                   type="submit"
-                  className="prof-btn prof-btn-primary"
+                  className={`${PROF_BTN} ${PROF_BTN_PRIMARY} flex-none disabled:opacity-50 disabled:cursor-not-allowed`}
                   disabled={!text.trim()}
                 >
                   <Send size={16} /> Enviar

@@ -4,8 +4,15 @@ import { Plus } from "lucide-react";
 import WorkoutCard from "../components/WorkoutCard";
 import { getSession } from "../services/session";
 import { listWorkoutsOf, deleteWorkout } from "../services/workoutsApi";
-import "../styles/Professors.css"; // botões
-import "../styles/Workouts.css";
+import { PROF_BTN, PROF_BTN_PRIMARY, PROF_NOTICE } from "../styles/professorsClasses";
+import {
+  WORKOUTS_PAGE,
+  WORKOUTS_HEADER,
+  WORKOUTS_SUBTITLE,
+  WORKOUTS_EMPTY,
+  WORKOUTS_LIST,
+  FLEX_NONE_NO_UNDERLINE,
+} from "../styles/workoutsClasses";
 
 // "Minhas fichas" do aluno
 function Workouts() {
@@ -35,21 +42,24 @@ function Workouts() {
   }
 
   return (
-    <div className="workouts-page">
-      <div className="workouts-header">
+    <div className={WORKOUTS_PAGE}>
+      <div className={WORKOUTS_HEADER}>
         <div>
-          <h1>Minhas fichas</h1>
-          <p className="workouts-subtitle">
+          <h1 className="mb-1">Minhas fichas</h1>
+          <p className={`${WORKOUTS_SUBTITLE} mb-0`}>
             Monte suas fichas de treino ou veja as que seu professor criou para você.
           </p>
         </div>
-        <Link to="/fichas/nova" className="prof-btn prof-btn-primary workouts-new">
+        <Link
+          to="/fichas/nova"
+          className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${FLEX_NONE_NO_UNDERLINE}`}
+        >
           <Plus size={16} /> Nova ficha
         </Link>
       </div>
 
       {notice && (
-        <p className="professors-notice" role="status">
+        <p className={PROF_NOTICE} role="status">
           {notice}
         </p>
       )}
@@ -57,15 +67,15 @@ function Workouts() {
       {loading && <p>Carregando fichas...</p>}
 
       {!loading && workouts.length === 0 && (
-        <div className="workouts-empty">
+        <div className={WORKOUTS_EMPTY}>
           <p>Você ainda não tem nenhuma ficha.</p>
-          <Link to="/fichas/nova" className="prof-btn prof-btn-primary">
+          <Link to="/fichas/nova" className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${FLEX_NONE_NO_UNDERLINE}`}>
             Criar minha primeira ficha
           </Link>
         </div>
       )}
 
-      <div className="workouts-list">
+      <div className={WORKOUTS_LIST}>
         {workouts.map((w) => (
           <WorkoutCard
             key={w.id}

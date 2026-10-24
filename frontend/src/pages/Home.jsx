@@ -6,11 +6,15 @@ import { listAppointments } from "../services/appointmentsApi";
 import { listWorkoutsOf } from "../services/workoutsApi";
 import { levelLabel } from "../utils/levels";
 import { toDate, dateParts } from "../utils/appointmentDate";
-import "../styles/Home.css";
 
 const STATUS_LABEL = {
   pending: "Pendente",
   confirmed: "Confirmado",
+};
+
+const BADGE_CLASS = {
+  pending: "bg-[var(--bg-warning)] text-[var(--text-warning)]",
+  confirmed: "bg-[var(--bg-success)] text-[var(--text-success)]",
 };
 
 function Home() {
@@ -44,83 +48,90 @@ function Home() {
   const parts = nextAppointment ? dateParts(nextAppointment) : null;
 
   return (
-    <div className="home-page">
-      <header className="home-header">
-        <h1>Olá, {firstName}!</h1>
-        <p>
+    <div className="p-10 flex-1 text-[var(--text)]">
+      <header>
+        <h1 className="m-0 mb-1 text-[2rem]">Olá, {firstName}!</h1>
+        <p className="m-0 flex items-center gap-2.5 text-[var(--text-muted)] text-[1.1rem]">
           Bem-vindo ao UniFit!
           {session.level && (
-            <span className="home-level">{levelLabel(session.level)}</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-[var(--bg-primary-soft)] text-[var(--text-primary-strong)] text-[0.8rem] font-semibold">
+              {levelLabel(session.level)}
+            </span>
           )}
         </p>
       </header>
 
       {!loading && (
-        <div className="home-grid">
+        <div className="grid [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))] gap-5 mt-7 max-w-[900px]">
           {/* próxima aula */}
-          <section className="home-card">
-            <div className="home-card-title">
+          <section className="flex flex-col gap-3.5 p-5 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-[14px]">
+            <div className="flex items-center gap-2 text-[var(--text-primary)]">
               <CalendarDays size={18} />
-              <h2>Próxima aula</h2>
+              <h2 className="m-0 text-[1.05rem] text-[var(--text)]">Próxima aula</h2>
             </div>
 
             {nextAppointment ? (
-              <div className="home-appointment">
-                <div className="home-date" aria-hidden="true">
-                  <strong>{parts.day}</strong>
-                  <span>{parts.month}</span>
+              <div className="flex gap-3.5">
+                <div
+                  className="flex flex-col items-center justify-center min-w-[56px] h-16 rounded-[10px] bg-[var(--bg-primary-subtle)] text-[var(--text-primary)]"
+                  aria-hidden="true"
+                >
+                  <strong className="text-[1.5rem] leading-none">{parts.day}</strong>
+                  <span className="text-[0.8rem] uppercase">{parts.month}</span>
                 </div>
-                <div className="home-appointment-info">
-                  <h3>
+                <div>
+                  <h3 className="flex items-center flex-wrap gap-2 m-0 mb-1.5 text-base">
                     {nextAppointment.type}
                     <span
-                      className={`home-badge home-badge-${nextAppointment.status}`}
+                      className={`px-2 py-0.5 rounded-full text-[0.7rem] font-semibold ${BADGE_CLASS[nextAppointment.status]}`}
                     >
                       {STATUS_LABEL[nextAppointment.status]}
                     </span>
                   </h3>
-                  <p>
+                  <p className="flex items-center gap-1.5 my-0.5 text-[var(--text-secondary)] text-[0.9rem]">
                     <GraduationCap size={14} /> {nextAppointment.professorName}
                   </p>
-                  <p>
+                  <p className="flex items-center gap-1.5 my-0.5 text-[var(--text-secondary)] text-[0.9rem]">
                     <Clock size={14} />
-                    <span className="home-weekday">{parts.weekday}</span> às{" "}
+                    <span className="capitalize">{parts.weekday}</span> às{" "}
                     {nextAppointment.time}
                   </p>
-                  <p>
+                  <p className="flex items-center gap-1.5 my-0.5 text-[var(--text-secondary)] text-[0.9rem]">
                     <MapPin size={14} /> {nextAppointment.gym}
                   </p>
                 </div>
               </div>
             ) : (
-              <p className="home-empty">Você não tem aulas agendadas.</p>
+              <p className="m-0 text-[var(--text-muted)]">Você não tem aulas agendadas.</p>
             )}
 
             <Link
               to={nextAppointment ? "/agenda" : "/professores"}
-              className="home-link"
+              className="mt-auto self-start px-4 py-2 rounded-lg bg-[var(--primary)] text-[var(--text-on-primary)] text-[0.9rem] font-semibold no-underline hover:bg-[var(--primary-hover)]"
             >
               {nextAppointment ? "Ver agenda" : "Agendar com um professor"}
             </Link>
           </section>
 
           {/* fichas */}
-          <section className="home-card">
-            <div className="home-card-title">
+          <section className="flex flex-col gap-3.5 p-5 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-[14px]">
+            <div className="flex items-center gap-2 text-[var(--text-primary)]">
               <ClipboardList size={18} />
-              <h2>Minhas fichas</h2>
+              <h2 className="m-0 text-[1.05rem] text-[var(--text)]">Minhas fichas</h2>
             </div>
 
             {lastWorkout ? (
               <>
-                <p className="home-count">
-                  <strong>{workouts.length}</strong>{" "}
+                <p className="m-0 text-[var(--text-secondary)]">
+                  <strong className="text-[1.6rem] text-[var(--text)]">{workouts.length}</strong>{" "}
                   {workouts.length === 1 ? "ficha criada" : "fichas criadas"}
                 </p>
-                <div className="home-workout">
-                  <span className="home-workout-label">Mais recente</span>
-                  <h3>{lastWorkout.name}</h3>
-                  <p>
+                <div className="px-3.5 py-3 rounded-[10px] bg-[var(--bg-subtle)] border border-[var(--border-subtle)]">
+                  <span className="text-[0.75rem] text-[var(--text-muted)] uppercase tracking-[0.04em]">
+                    Mais recente
+                  </span>
+                  <h3 className="my-1 text-base">{lastWorkout.name}</h3>
+                  <p className="m-0 text-[var(--text-muted)] text-[0.9rem]">
                     {lastWorkout.exercises?.length ?? 0}{" "}
                     {(lastWorkout.exercises?.length ?? 0) === 1
                       ? "exercício"
@@ -128,14 +139,20 @@ function Home() {
                     {lastWorkout.goal ? ` · ${lastWorkout.goal}` : ""}
                   </p>
                 </div>
-                <Link to={`/fichas/${lastWorkout.id}`} className="home-link">
+                <Link
+                  to={`/fichas/${lastWorkout.id}`}
+                  className="mt-auto self-start px-4 py-2 rounded-lg bg-[var(--primary)] text-[var(--text-on-primary)] text-[0.9rem] font-semibold no-underline hover:bg-[var(--primary-hover)]"
+                >
                   Abrir ficha
                 </Link>
               </>
             ) : (
               <>
-                <p className="home-empty">Você ainda não tem fichas de treino.</p>
-                <Link to="/fichas/nova" className="home-link">
+                <p className="m-0 text-[var(--text-muted)]">Você ainda não tem fichas de treino.</p>
+                <Link
+                  to="/fichas/nova"
+                  className="mt-auto self-start px-4 py-2 rounded-lg bg-[var(--primary)] text-[var(--text-on-primary)] text-[0.9rem] font-semibold no-underline hover:bg-[var(--primary-hover)]"
+                >
                   Criar minha primeira ficha
                 </Link>
               </>

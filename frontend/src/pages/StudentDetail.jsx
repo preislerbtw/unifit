@@ -6,8 +6,17 @@ import { getSession } from "../services/session";
 import { getStudentOfProfessor } from "../services/studentsApi";
 import { listWorkoutsOf, deleteWorkout } from "../services/workoutsApi";
 import { levelLabel } from "../utils/levels";
-import "../styles/Professors.css"; // botões
-import "../styles/Workouts.css";
+import { PROF_BTN, PROF_BTN_PRIMARY, PROF_BTN_SECONDARY, PROF_NOTICE } from "../styles/professorsClasses";
+import {
+  WORKOUTS_PAGE,
+  WORKOUTS_BACK,
+  WORKOUTS_HEADER,
+  WORKOUTS_SUBTITLE,
+  WORKOUTS_EMPTY,
+  WORKOUTS_LIST,
+  STUDENT_HEADER_ACTIONS,
+  FLEX_NONE_NO_UNDERLINE,
+} from "../styles/workoutsClasses";
 
 // fichas de um aluno, vistas pelo professor
 function StudentDetail() {
@@ -44,39 +53,42 @@ function StudentDetail() {
     setNotice("Ficha excluída.");
   }
 
-  if (loading) return <p className="workouts-page">Carregando...</p>;
+  if (loading) return <p className={WORKOUTS_PAGE}>Carregando...</p>;
 
   if (!student) {
     return (
-      <div className="workouts-page">
-        <Link to="/alunos" className="workouts-back">
+      <div className={WORKOUTS_PAGE}>
+        <Link to="/alunos" className={WORKOUTS_BACK}>
           <ArrowLeft size={16} /> Voltar
         </Link>
-        <div className="workouts-empty">Aluno não encontrado entre os seus atendimentos.</div>
+        <div className={WORKOUTS_EMPTY}>Aluno não encontrado entre os seus atendimentos.</div>
       </div>
     );
   }
 
   return (
-    <div className="workouts-page">
-      <Link to="/alunos" className="workouts-back">
+    <div className={WORKOUTS_PAGE}>
+      <Link to="/alunos" className={WORKOUTS_BACK}>
         <ArrowLeft size={16} /> Alunos
       </Link>
 
-      <div className="workouts-header">
+      <div className={WORKOUTS_HEADER}>
         <div>
           <h1>{student.name}</h1>
-          <p className="workouts-subtitle">Nível: {levelLabel(student.level)}</p>
+          <p className={WORKOUTS_SUBTITLE}>Nível: {levelLabel(student.level)}</p>
         </div>
-        <div className="student-header-actions">
+        <div className={STUDENT_HEADER_ACTIONS}>
           {session.role === "professor" && (
-            <Link to={`/chat/${student.id}`} className="prof-btn prof-btn-secondary">
+            <Link
+              to={`/chat/${student.id}`}
+              className={`${PROF_BTN} ${PROF_BTN_SECONDARY} ${FLEX_NONE_NO_UNDERLINE}`}
+            >
               Conversar
             </Link>
           )}
           <Link
             to={`/alunos/${student.id}/fichas/nova`}
-            className="prof-btn prof-btn-primary"
+            className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${FLEX_NONE_NO_UNDERLINE}`}
           >
             <Plus size={16} /> Nova ficha
           </Link>
@@ -84,21 +96,24 @@ function StudentDetail() {
       </div>
 
       {notice && (
-        <p className="professors-notice" role="status">
+        <p className={PROF_NOTICE} role="status">
           {notice}
         </p>
       )}
 
       {workouts.length === 0 && (
-        <div className="workouts-empty">
+        <div className={WORKOUTS_EMPTY}>
           <p>Você ainda não criou fichas para {student.name}.</p>
-          <Link to={`/alunos/${student.id}/fichas/nova`} className="prof-btn prof-btn-primary">
+          <Link
+            to={`/alunos/${student.id}/fichas/nova`}
+            className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${FLEX_NONE_NO_UNDERLINE}`}
+          >
             Criar a primeira ficha
           </Link>
         </div>
       )}
 
-      <div className="workouts-list">
+      <div className={WORKOUTS_LIST}>
         {workouts.map((w) => (
           <WorkoutCard
             key={w.id}

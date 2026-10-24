@@ -1,5 +1,19 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import {
+  MODAL_OVERLAY,
+  MODAL_CARD,
+  MODAL_CLOSE,
+  MODAL_SUBTITLE,
+  MODAL_FIELD,
+  MODAL_FIELD_LABEL,
+  MODAL_FIELD_INPUT,
+  MODAL_ERROR,
+  MODAL_ACTIONS,
+  PROF_BTN,
+  PROF_BTN_PRIMARY,
+  PROF_BTN_SECONDARY,
+} from "../styles/professorsClasses";
 
 const TIPOS = ["Avaliação física", "Aula"];
 const HORARIOS = [
@@ -41,33 +55,38 @@ function AppointmentModal({ professor, onClose, onConfirm }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={MODAL_OVERLAY} onClick={onClose}>
       <div
-        className="modal-card"
+        className={MODAL_CARD}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-titulo"
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="modal-close" onClick={onClose} aria-label="Fechar">
+        <button className={MODAL_CLOSE} onClick={onClose} aria-label="Fechar">
           <X size={18} />
         </button>
 
         <h2 id="modal-titulo">Agendamento</h2>
-        <p className="modal-subtitle">com {professor.nome}</p>
+        <p className={MODAL_SUBTITLE}>com {professor.nome}</p>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div className="modal-field">
-            <label htmlFor="ag-tipo">Tipo</label>
-            <select id="ag-tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="ag-tipo" className={MODAL_FIELD_LABEL}>Tipo</label>
+            <select
+              id="ag-tipo"
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
+              className={MODAL_FIELD_INPUT}
+            >
               {TIPOS.map((t) => (
                 <option key={t}>{t}</option>
               ))}
             </select>
           </div>
 
-          <div className="modal-field">
-            <label htmlFor="ag-data">Data</label>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="ag-data" className={MODAL_FIELD_LABEL}>Data</label>
             <input
               id="ag-data"
               type="date"
@@ -77,11 +96,12 @@ function AppointmentModal({ professor, onClose, onConfirm }) {
                 setData(e.target.value);
                 setErro("");
               }}
+              className={MODAL_FIELD_INPUT}
             />
           </div>
 
-          <div className="modal-field">
-            <label htmlFor="ag-horario">Horário</label>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="ag-horario" className={MODAL_FIELD_LABEL}>Horário</label>
             <select
               id="ag-horario"
               value={horario}
@@ -89,6 +109,7 @@ function AppointmentModal({ professor, onClose, onConfirm }) {
                 setHorario(e.target.value);
                 setErro("");
               }}
+              className={MODAL_FIELD_INPUT}
             >
               <option value="">Selecione</option>
               {HORARIOS.map((h) => (
@@ -97,13 +118,13 @@ function AppointmentModal({ professor, onClose, onConfirm }) {
             </select>
           </div>
 
-          {erro && <p className="modal-error">{erro}</p>}
+          {erro && <p className={MODAL_ERROR}>{erro}</p>}
 
-          <div className="modal-actions">
-            <button type="button" className="prof-btn prof-btn-secondary" onClick={onClose}>
+          <div className={MODAL_ACTIONS}>
+            <button type="button" className={`${PROF_BTN} ${PROF_BTN_SECONDARY}`} onClick={onClose}>
               Cancelar
             </button>
-            <button type="submit" className="prof-btn prof-btn-primary">
+            <button type="submit" className={`${PROF_BTN} ${PROF_BTN_PRIMARY}`}>
               Confirmar agendamento
             </button>
           </div>

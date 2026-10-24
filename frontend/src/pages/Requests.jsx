@@ -9,15 +9,48 @@ import {
 import { getSession } from "../services/session";
 import { toDate, dateParts } from "../utils/appointmentDate";
 import { levelLabel } from "../utils/levels";
-import "../styles/Schedule.css";
-import "../styles/Professors.css";
-import "../styles/Dashboard.css";
+import { PROF_BTN, PROF_BTN_PRIMARY } from "../styles/professorsClasses";
+import {
+  SCHEDULE_TABS,
+  SCHEDULE_TAB_BTN,
+  SCHEDULE_TAB_BTN_ACTIVE,
+  APPOINTMENT_WEEKDAY,
+  APPOINTMENT_DATE,
+  APPOINTMENT_DATE_STRONG,
+  APPOINTMENT_DATE_SPAN,
+  STATUS_BADGE,
+  STATUS_PENDING,
+  STATUS_CONFIRMED,
+  STATUS_CANCELLED,
+} from "../styles/scheduleClasses";
+import {
+  DASHBOARD_PAGE,
+  DASHBOARD_SUBTITLE,
+  DASHBOARD_EMPTY,
+  DASHBOARD_LIST,
+  REQUEST_CARD,
+  REQUEST_INFO,
+  REQUEST_INFO_P,
+  REQUEST_TITLE,
+  REQUEST_ACTIONS,
+  REQUEST_ACTIONS_CHILD,
+  REQUEST_ACTIONS_BTN_DISABLED,
+  REQUEST_REJECT,
+  REQUEST_ERROR,
+  REQUEST_CONFLICT,
+} from "../styles/dashboardClasses";
 
 const STATUS_LABEL = {
   pending: "Pendente",
   confirmed: "Aceito",
   rejected: "Recusado",
   cancelled: "Cancelado pelo aluno",
+};
+
+const STATUS_CLASS = {
+  pending: STATUS_PENDING,
+  confirmed: STATUS_CONFIRMED,
+  cancelled: STATUS_CANCELLED,
 };
 
 function Requests() {
@@ -76,17 +109,17 @@ function Requests() {
   const list = tab === "pending" ? pending : answered;
 
   return (
-    <div className="dashboard-page">
+    <div className={DASHBOARD_PAGE}>
       <h1>Solicitações</h1>
-      <p className="dashboard-subtitle">
+      <p className={DASHBOARD_SUBTITLE}>
         Aceite ou recuse os pedidos de avaliação física e aula dos alunos.
       </p>
 
-      <div className="schedule-tabs" role="tablist">
+      <div className={SCHEDULE_TABS} role="tablist">
         <button
           role="tab"
           aria-selected={tab === "pending"}
-          className={tab === "pending" ? "is-active" : ""}
+          className={`${SCHEDULE_TAB_BTN} ${tab === "pending" ? SCHEDULE_TAB_BTN_ACTIVE : ""}`}
           onClick={() => setTab("pending")}
         >
           Pendentes ({pending.length})
@@ -94,7 +127,7 @@ function Requests() {
         <button
           role="tab"
           aria-selected={tab === "answered"}
-          className={tab === "answered" ? "is-active" : ""}
+          className={`${SCHEDULE_TAB_BTN} ${tab === "answered" ? SCHEDULE_TAB_BTN_ACTIVE : ""}`}
           onClick={() => setTab("answered")}
         >
           Respondidas ({answered.length})
@@ -102,7 +135,7 @@ function Requests() {
       </div>
 
       {error && (
-        <p className="request-error" role="alert">
+        <p className={REQUEST_ERROR} role="alert">
           {error}
         </p>
       )}
@@ -110,14 +143,14 @@ function Requests() {
       {loading && <p>Carregando solicitações...</p>}
 
       {!loading && list.length === 0 && (
-        <div className="dashboard-empty">
+        <div className={DASHBOARD_EMPTY}>
           {tab === "pending"
             ? "Nenhuma solicitação pendente."
             : "Você ainda não respondeu nenhuma solicitação."}
         </div>
       )}
 
-      <div className="dashboard-list">
+      <div className={DASHBOARD_LIST}>
         {list.map((a) => {
           const { day, month, weekday } = dateParts(a);
           // já existe outro atendimento confirmado neste mesmo horário?
@@ -126,33 +159,33 @@ function Requests() {
             professorHasConfirmedAt(appointments, a.professorId, a, a.id);
 
           return (
-            <article key={a.id} className="request-card">
-              <div className="appointment-date" aria-hidden="true">
-                <strong>{day}</strong>
-                <span>{month}</span>
+            <article key={a.id} className={REQUEST_CARD}>
+              <div className={APPOINTMENT_DATE} aria-hidden="true">
+                <strong className={APPOINTMENT_DATE_STRONG}>{day}</strong>
+                <span className={APPOINTMENT_DATE_SPAN}>{month}</span>
               </div>
 
-              <div className="request-info">
-                <div className="request-title">
+              <div className={REQUEST_INFO}>
+                <div className={REQUEST_TITLE}>
                   <h3>{a.type}</h3>
-                  <span className={`status-badge status-${a.status}`}>
+                  <span className={`${STATUS_BADGE} ${STATUS_CLASS[a.status] ?? ""}`}>
                     {STATUS_LABEL[a.status]}
                   </span>
                 </div>
-                <p>
+                <p className={REQUEST_INFO_P}>
                   <User size={14} /> {a.studentName}
                   {a.studentLevel && <> · nível {levelLabel(a.studentLevel).toLowerCase()}</>}
                 </p>
-                <p>
+                <p className={REQUEST_INFO_P}>
                   <Clock size={14} />
-                  <span className="appointment-weekday">{weekday}</span> às{" "}
+                  <span className={APPOINTMENT_WEEKDAY}>{weekday}</span> às{" "}
                   {a.time}
                 </p>
-                <p>
+                <p className={REQUEST_INFO_P}>
                   <MapPin size={14} /> {a.gym}
                 </p>
                 {conflict && (
-                  <p className="request-conflict">
+                  <p className={REQUEST_CONFLICT}>
                     <AlertTriangle size={14} /> Conflito: você já tem um atendimento
                     confirmado neste horário.
                   </p>
@@ -160,16 +193,16 @@ function Requests() {
               </div>
 
               {a.status === "pending" && (
-                <div className="request-actions">
+                <div className={REQUEST_ACTIONS}>
                   <button
-                    className="prof-btn prof-btn-primary"
+                    className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${REQUEST_ACTIONS_BTN_DISABLED} ${REQUEST_ACTIONS_CHILD}`}
                     disabled={conflict}
                     onClick={() => answer(a, "confirmed")}
                   >
                     Aceitar
                   </button>
                   <button
-                    className="request-reject"
+                    className={`${REQUEST_REJECT} ${REQUEST_ACTIONS_CHILD}`}
                     onClick={() => answer(a, "rejected")}
                   >
                     Recusar

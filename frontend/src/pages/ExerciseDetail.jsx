@@ -12,7 +12,6 @@ import {
   trMuscle,
   translateText,
 } from "../utils/translations";
-import "../styles/ExerciseDetail.css";
 
 function ExerciseDetail() {
   const { id } = useParams();
@@ -79,26 +78,32 @@ function ExerciseDetail() {
   const passos = textos?.passos || exercicio.instructions || [];
 
   return (
-    <div className="exercise-detail-page">
-      <Button variant="soft" onClick={() => navigate("/exercicios")}>
+    <div className="flex-1 p-8">
+      <Button variant="soft" className="mb-6" onClick={() => navigate("/exercicios")}>
         Voltar
       </Button>
 
-      <div className="exercise-detail-grid">
-        <div className="exercise-media">
+      <div className="grid grid-cols-2 gap-8 mb-8 max-md:grid-cols-1">
+        <div className="flex items-center justify-center">
           <ExerciseDemo images={exerciseImages(exercicio)} alt={`Execução: ${titulo}`} />
         </div>
 
-        <div className="exercise-info">
-          <h1>{titulo}</h1>
-          <div className="exercise-tags">
-            <span>{trBodyPart(exercicio.bodyPart)}</span>
-            <span>{trEquipment(exercicio.equipment)}</span>
-            <span className="tag-dificuldade">{trLevel(exercicio.difficulty)}</span>
+        <div>
+          <h1 className="text-[26px] mb-3">{titulo}</h1>
+          <div className="flex gap-2 mb-5">
+            <span className="bg-[var(--bg-primary-subtle)] text-[var(--text-primary)] px-2.5 py-1 rounded-md text-xs capitalize">
+              {trBodyPart(exercicio.bodyPart)}
+            </span>
+            <span className="bg-[var(--bg-primary-subtle)] text-[var(--text-primary)] px-2.5 py-1 rounded-md text-xs capitalize">
+              {trEquipment(exercicio.equipment)}
+            </span>
+            <span className="!bg-[var(--bg-warning)] !text-[var(--text-warning)] px-2.5 py-1 rounded-md text-xs capitalize">
+              {trLevel(exercicio.difficulty)}
+            </span>
           </div>
 
-          <h3>Músculos trabalhados</h3>
-          <p>
+          <h3 className="text-sm mt-4 mb-1 text-[var(--text-secondary)]">Músculos trabalhados</h3>
+          <p className="text-sm text-[var(--text-secondary)] capitalize">
             <strong>{trMuscle(exercicio.target)}</strong> (principal)
             {exercicio.secondaryMuscles?.length > 0 && (
               <>
@@ -108,18 +113,18 @@ function ExerciseDetail() {
             )}
           </p>
 
-          <h3>Região do corpo</h3>
-          <p>{trBodyPart(exercicio.bodyPart)}</p>
+          <h3 className="text-sm mt-4 mb-1 text-[var(--text-secondary)]">Região do corpo</h3>
+          <p className="text-sm text-[var(--text-secondary)] capitalize">{trBodyPart(exercicio.bodyPart)}</p>
 
           {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
         </div>
       </div>
 
-      <div className="exercise-steps">
-        <h3>Passo a passo</h3>
-        <ol>
+      <div className="bg-[var(--bg-subtle)] rounded-xl p-6">
+        <h3 className="mb-3">Passo a passo</h3>
+        <ol className="pl-5">
           {passos.map((passo, i) => (
-            <li key={i}>{passo}</li>
+            <li key={i} className="mb-2 text-sm text-[var(--text-secondary)]">{passo}</li>
           ))}
         </ol>
       </div>

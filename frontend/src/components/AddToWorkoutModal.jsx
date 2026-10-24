@@ -2,8 +2,21 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { getSession } from "../services/session";
 import {listWorkoutsOf, saveWorkout, makeLine,} from "../services/workoutsApi";
-import "../styles/Professors.css"; // usa o modal e os botões desta folha
-import "../styles/Workouts.css";
+import {
+  MODAL_OVERLAY,
+  MODAL_CARD,
+  MODAL_CLOSE,
+  MODAL_SUBTITLE,
+  MODAL_FIELD,
+  MODAL_FIELD_LABEL,
+  MODAL_FIELD_INPUT,
+  MODAL_ERROR,
+  MODAL_ACTIONS,
+  PROF_BTN,
+  PROF_BTN_PRIMARY,
+  PROF_BTN_SECONDARY,
+} from "../styles/professorsClasses";
+import { ADD_ROW } from "../styles/workoutsClasses";
 
 function AddToWorkoutModal({ exercise, onClose, onDone }) {
   const session = getSession();
@@ -68,24 +81,24 @@ function AddToWorkoutModal({ exercise, onClose, onDone }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className={MODAL_OVERLAY} onClick={onClose}>
       <div
-        className="modal-card"
+        className={MODAL_CARD}
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="modal-close" onClick={onClose} aria-label="Fechar">
+        <button className={MODAL_CLOSE} onClick={onClose} aria-label="Fechar">
           <X size={18} />
         </button>
 
         <h2 id="add-title">Adicionar à ficha</h2>
-        <p className="modal-subtitle">{exercise.name}</p>
+        <p className={MODAL_SUBTITLE}>{exercise.name}</p>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div className="modal-field">
-            <label htmlFor="add-target">Ficha</label>
+          <div className={MODAL_FIELD}>
+            <label htmlFor="add-target" className={MODAL_FIELD_LABEL}>Ficha</label>
             <select
               id="add-target"
               value={target}
@@ -93,6 +106,7 @@ function AddToWorkoutModal({ exercise, onClose, onDone }) {
                 setTarget(e.target.value);
                 setError("");
               }}
+              className={MODAL_FIELD_INPUT}
             >
               {mine.map((w) => (
                 <option key={w.id} value={w.id}>
@@ -104,8 +118,8 @@ function AddToWorkoutModal({ exercise, onClose, onDone }) {
           </div>
 
           {target === "new" && (
-            <div className="modal-field">
-              <label htmlFor="add-name">Nome da nova ficha</label>
+            <div className={MODAL_FIELD}>
+              <label htmlFor="add-name" className={MODAL_FIELD_LABEL}>Nome da nova ficha</label>
               <input
                 id="add-name"
                 type="text"
@@ -115,32 +129,54 @@ function AddToWorkoutModal({ exercise, onClose, onDone }) {
                   setNewName(e.target.value);
                   setError("");
                 }}
+                className={MODAL_FIELD_INPUT}
               />
             </div>
           )}
 
-          <div className="add-row">
-            <div className="modal-field">
-              <label htmlFor="add-sets">Séries</label>
-              <input id="add-sets" type="number" min="1" value={sets} onChange={(e) => setSets(e.target.value)} />
+          <div className={ADD_ROW}>
+            <div className={MODAL_FIELD}>
+              <label htmlFor="add-sets" className={MODAL_FIELD_LABEL}>Séries</label>
+              <input
+                id="add-sets"
+                type="number"
+                min="1"
+                value={sets}
+                onChange={(e) => setSets(e.target.value)}
+                className={MODAL_FIELD_INPUT}
+              />
             </div>
-            <div className="modal-field">
-              <label htmlFor="add-reps">Repetições</label>
-              <input id="add-reps" type="number" min="1" value={reps} onChange={(e) => setReps(e.target.value)} />
+            <div className={MODAL_FIELD}>
+              <label htmlFor="add-reps" className={MODAL_FIELD_LABEL}>Repetições</label>
+              <input
+                id="add-reps"
+                type="number"
+                min="1"
+                value={reps}
+                onChange={(e) => setReps(e.target.value)}
+                className={MODAL_FIELD_INPUT}
+              />
             </div>
-            <div className="modal-field">
-              <label htmlFor="add-load">Carga</label>
-              <input id="add-load" type="text" placeholder="40 kg" value={load} onChange={(e) => setLoad(e.target.value)} />
+            <div className={MODAL_FIELD}>
+              <label htmlFor="add-load" className={MODAL_FIELD_LABEL}>Carga</label>
+              <input
+                id="add-load"
+                type="text"
+                placeholder="40 kg"
+                value={load}
+                onChange={(e) => setLoad(e.target.value)}
+                className={MODAL_FIELD_INPUT}
+              />
             </div>
           </div>
 
-          {error && <p className="modal-error">{error}</p>}
+          {error && <p className={MODAL_ERROR}>{error}</p>}
 
-          <div className="modal-actions">
-            <button type="button" className="prof-btn prof-btn-secondary" onClick={onClose}>
+          <div className={MODAL_ACTIONS}>
+            <button type="button" className={`${PROF_BTN} ${PROF_BTN_SECONDARY}`} onClick={onClose}>
               Cancelar
             </button>
-            <button type="submit" className="prof-btn prof-btn-primary">
+            <button type="submit" className={`${PROF_BTN} ${PROF_BTN_PRIMARY}`}>
               Adicionar
             </button>
           </div>

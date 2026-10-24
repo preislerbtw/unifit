@@ -1,8 +1,16 @@
 import { useState } from "react";
-import "../styles/Perfil.css";
 import { CircleUserRound } from "lucide-react";
 import { getSession, setSession } from "../services/session";
 import { atualizarMedidas } from "../services/authApi";
+
+const DADO_BOX =
+  "bg-[var(--bg-subtle)] border border-[var(--border-subtle)] rounded-xl px-4 py-3 flex flex-col gap-1 transition-all duration-200 ease-in-out hover:border-[var(--border-hover)] hover:bg-[var(--bg-hover)]";
+const DADO_LABEL = "text-xs font-semibold uppercase tracking-[0.05em] text-[var(--text-muted)]";
+const DADO_VALOR = "text-[0.95rem] font-medium text-[var(--text)] break-all";
+const PERFIL_BTN =
+  "flex-1 px-4 py-2.5 border border-transparent rounded-lg text-[0.95rem] font-semibold cursor-pointer transition-opacity duration-200 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed";
+const PERFIL_BTN_PRIMARIO = "bg-[var(--accent)] text-white";
+const PERFIL_BTN_SECUNDARIO = "bg-transparent text-[var(--text)] border-[var(--border)]";
 
 // aceita "72,5"/"72.5"
 function paraNumero(valor) {
@@ -61,42 +69,42 @@ function Perfil() {
   }
 
   return (
-    <div className="perfil-page">
-      <div className="perfil-avatar">
-        <CircleUserRound className="icone-perfil" />
+    <div className="max-w-[450px] mx-auto my-[60px] pt-[72px] px-6 pb-8 bg-[var(--bg-surface)] rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.05)] flex flex-col items-center transition-[transform,box-shadow] duration-200 ease-in-out relative">
+      <div>
+        <CircleUserRound className="w-16 h-16 text-[var(--accent)]" />
       </div>
 
-      <div className="perfil-dados">
-        <div className="dado-box">
-          <span className="dado-label">Nome</span>
-          <span className="dado-valor">{usuario.name || "—"}</span>
+      <div className="w-full flex flex-col gap-4">
+        <div className={DADO_BOX}>
+          <span className={DADO_LABEL}>Nome</span>
+          <span className={DADO_VALOR}>{usuario.name || "—"}</span>
         </div>
 
         {usuario.curso && (
-          <div className="dado-box">
-            <span className="dado-label">Curso</span>
-            <span className="dado-valor">{usuario.curso}</span>
+          <div className={DADO_BOX}>
+            <span className={DADO_LABEL}>Curso</span>
+            <span className={DADO_VALOR}>{usuario.curso}</span>
           </div>
         )}
 
         {usuario.matricula && (
-          <div className="dado-box">
-            <span className="dado-label">Matrícula</span>
-            <span className="dado-valor">{usuario.matricula}</span>
+          <div className={DADO_BOX}>
+            <span className={DADO_LABEL}>Matrícula</span>
+            <span className={DADO_VALOR}>{usuario.matricula}</span>
           </div>
         )}
 
         {usuario.email && (
-          <div className="dado-box">
-            <span className="dado-label">Email</span>
-            <span className="dado-valor">{usuario.email}</span>
+          <div className={DADO_BOX}>
+            <span className={DADO_LABEL}>Email</span>
+            <span className={DADO_VALOR}>{usuario.email}</span>
           </div>
         )}
 
         {usuario.idUsuario != null && (
-          <div className="dado-box">
-            <span className="dado-label">ID do Usuário</span>
-            <span className="dado-valor">
+          <div className={DADO_BOX}>
+            <span className={DADO_LABEL}>ID do Usuário</span>
+            <span className={DADO_VALOR}>
               {String(usuario.idUsuario).padStart(4, "0")}
             </span>
           </div>
@@ -104,14 +112,14 @@ function Perfil() {
 
         {/* peso e altura: so sao preenchidos aqui no perfil */}
         {editando ? (
-          <form className="perfil-form" onSubmit={salvar} noValidate>
-            <div className="dado-box">
-              <label className="dado-label" htmlFor="perfil-peso">
+          <form className="flex flex-col gap-4" onSubmit={salvar} noValidate>
+            <div className={DADO_BOX}>
+              <label className={DADO_LABEL} htmlFor="perfil-peso">
                 Peso (kg)
               </label>
               <input
                 id="perfil-peso"
-                className="perfil-input"
+                className="w-full box-border px-2.5 py-2 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] text-[var(--text)] text-[0.95rem] focus:outline-none focus:border-[var(--accent)]"
                 type="text"
                 inputMode="decimal"
                 placeholder="Ex: 72,5"
@@ -121,13 +129,13 @@ function Perfil() {
               />
             </div>
 
-            <div className="dado-box">
-              <label className="dado-label" htmlFor="perfil-altura">
+            <div className={DADO_BOX}>
+              <label className={DADO_LABEL} htmlFor="perfil-altura">
                 Altura (m)
               </label>
               <input
                 id="perfil-altura"
-                className="perfil-input"
+                className="w-full box-border px-2.5 py-2 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] text-[var(--text)] text-[0.95rem] focus:outline-none focus:border-[var(--accent)]"
                 type="text"
                 inputMode="decimal"
                 placeholder="Ex: 1,75"
@@ -136,12 +144,16 @@ function Perfil() {
               />
             </div>
 
-            {erro && <p className="perfil-erro">{erro}</p>}
+            {erro && (
+              <p className="m-0 px-3 py-2.5 rounded-lg bg-[#fee2e2] text-[#b91c1c] text-[0.85rem] text-center">
+                {erro}
+              </p>
+            )}
 
-            <div className="perfil-acoes">
+            <div className="flex gap-3">
               <button
                 type="button"
-                className="perfil-btn perfil-btn-secundario"
+                className={`${PERFIL_BTN} ${PERFIL_BTN_SECUNDARIO}`}
                 onClick={() => setEditando(false)}
                 disabled={salvando}
               >
@@ -149,7 +161,7 @@ function Perfil() {
               </button>
               <button
                 type="submit"
-                className="perfil-btn perfil-btn-primario"
+                className={`${PERFIL_BTN} ${PERFIL_BTN_PRIMARIO}`}
                 disabled={salvando}
               >
                 {salvando ? "Salvando..." : "Salvar"}
@@ -158,28 +170,32 @@ function Perfil() {
           </form>
         ) : (
           <>
-            <div className="dado-box">
-              <span className="dado-label">Peso</span>
-              <span className="dado-valor">
+            <div className={DADO_BOX}>
+              <span className={DADO_LABEL}>Peso</span>
+              <span className={DADO_VALOR}>
                 {usuario.peso != null ? `${usuario.peso} KG` : "—"}
               </span>
             </div>
 
-            <div className="dado-box">
-              <span className="dado-label">Altura</span>
-              <span className="dado-valor">
+            <div className={DADO_BOX}>
+              <span className={DADO_LABEL}>Altura</span>
+              <span className={DADO_VALOR}>
                 {usuario.altura != null
                   ? `${Number(usuario.altura).toFixed(2)} M`
                   : "—"}
               </span>
             </div>
 
-            {salvo && <p className="perfil-sucesso">Dados salvos!</p>}
+            {salvo && (
+              <p className="m-0 px-3 py-2.5 rounded-lg bg-[#dcfce7] text-[#166534] text-[0.85rem] text-center">
+                Dados salvos!
+              </p>
+            )}
 
             {podeEditar && (
               <button
                 type="button"
-                className="perfil-btn perfil-btn-primario"
+                className={`${PERFIL_BTN} ${PERFIL_BTN_PRIMARIO}`}
                 onClick={abrirEdicao}
               >
                 {usuario.peso != null || usuario.altura != null
