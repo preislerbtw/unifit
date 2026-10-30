@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft, Target, PersonStanding } from "lucide-react";
 import Button from "../components/Button";
 import { buscarExercicioPorId } from "../services/exerciseApi";
 import { exerciseImages } from "../services/exerciseMedia";
@@ -12,6 +13,13 @@ import {
   trMuscle,
   translateText,
 } from "../utils/translations";
+
+// separa a "Dica:" do restante do passo, para destacá-la visualmente
+function splitDica(passo) {
+  const match = passo.match(/^(.*?)\s*(Dica:\s*.*)$/is);
+  if (!match || !match[1]) return { texto: passo, dica: null };
+  return { texto: match[1], dica: match[2] };
+}
 
 function ExerciseDetail() {
   const { id } = useParams();
@@ -60,12 +68,12 @@ function ExerciseDetail() {
   }, [id, nomePt]);
 
   if (carregando) {
-    return <p style={{ padding: "40px" }}>Carregando exercício...</p>;
+    return <p className="p-10 text-[var(--text-secondary)]">Carregando exercício...</p>;
   }
 
   if (erro || !exercicio) {
     return (
-      <div style={{ padding: "40px" }}>
+      <div className="p-10 flex flex-col items-start gap-4">
         <p>Não foi possível carregar este exercício.</p>
         <Button variant="secondary" onClick={() => navigate("/exercicios")}>
           ← Voltar ao catálogo
@@ -74,59 +82,123 @@ function ExerciseDetail() {
     );
   }
 
-  const titulo = textos?.nome || nomePt || exercicio.namePt || traduzirNomeExercicio(exercicio.name).pt;
+  const titulo =
+    textos?.nome ||
+    nomePt ||
+    exercicio.namePt ||
+    traduzirNomeExercicio(exercicio.name).pt;
   const passos = textos?.passos || exercicio.instructions || [];
 
+  const tag =
+    "px-3 py-1 rounded-full text-xs font-semibold capitalize bg-[var(--bg-primary-subtle)] text-[var(--text-primary)]";
+
   return (
-    <div className="flex-1 p-8">
-      <Button variant="soft" className="mb-6" onClick={() => navigate("/exercicios")}>
-        Voltar
-      </Button>
+    <div className="flex-1 px-10 py-7 max-md:px-4 max-md:pt-[72px]">
+      <div className="max-w-5xl mx-auto flex flex-col gap-6">
+        <Button
+          variant="soft"
+          className="self-start inline-flex items-center gap-2"
+          onClick={() => navigate("/exercicios")}
+        >
+          <ArrowLeft size={16} /> Voltar
+        </Button>
 
-      <div className="grid grid-cols-2 gap-8 mb-8 max-md:grid-cols-1">
-        <div className="flex items-center justify-center">
-          <ExerciseDemo images={exerciseImages(exercicio)} alt={`Execução: ${titulo}`} />
-        </div>
-
-        <div>
-          <h1 className="text-[26px] mb-3">{titulo}</h1>
-          <div className="flex gap-2 mb-5">
-            <span className="bg-[var(--bg-primary-subtle)] text-[var(--text-primary)] px-2.5 py-1 rounded-md text-xs capitalize">
-              {trBodyPart(exercicio.bodyPart)}
-            </span>
-            <span className="bg-[var(--bg-primary-subtle)] text-[var(--text-primary)] px-2.5 py-1 rounded-md text-xs capitalize">
-              {trEquipment(exercicio.equipment)}
-            </span>
-            <span className="!bg-[var(--bg-warning)] !text-[var(--text-warning)] px-2.5 py-1 rounded-md text-xs capitalize">
-              {trLevel(exercicio.difficulty)}
-            </span>
+        {/* hero: demonstração + informações */}
+        <section className="grid grid-cols-[1fr_1.1fr] gap-8 p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-sm max-md:grid-cols-1">
+          <div className="flex items-center justify-center self-center rounded-xl overflow-hidden [&_img]:block [&_img]:w-full [&_img]:h-auto [&_img]:object-cover">
+            <ExerciseDemo
+              images={exerciseImages(exercicio)}
+              alt={`Execução: ${titulo}`}
+            />
           </div>
 
-          <h3 className="text-sm mt-4 mb-1 text-[var(--text-secondary)]">Músculos trabalhados</h3>
-          <p className="text-sm text-[var(--text-secondary)] capitalize">
-            <strong>{trMuscle(exercicio.target)}</strong> (principal)
-            {exercicio.secondaryMuscles?.length > 0 && (
-              <>
-                <br />
-                {exercicio.secondaryMuscles.map(trMuscle).join(", ")} (secundários)
-              </>
-            )}
-          </p>
+          <div className="flex flex-col justify-center gap-5">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight mb-3 max-md:text-3xl">
+                {titulo}
+              </h1>
+              <div className="flex flex-wrap gap-2">
+                <span className={tag}>{trBodyPart(exercicio.bodyPart)}</span>
+                <span className={tag}>{trEquipment(exercicio.equipment)}</span>
+                <span className="px-3 py-1 rounded-full text-xs font-semibold capitalize bg-[var(--bg-warning)] text-[var(--text-warning)]">
+                  {trLevel(exercicio.difficulty)}
+                </span>
+              </div>
+            </div>
 
-          <h3 className="text-sm mt-4 mb-1 text-[var(--text-secondary)]">Região do corpo</h3>
-          <p className="text-sm text-[var(--text-secondary)] capitalize">{trBodyPart(exercicio.bodyPart)}</p>
+            <div className="grid grid-cols-2 gap-3 max-sm:grid-cols-1">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-[var(--bg-muted)]">
+                <Target
+                  size={20}
+                  className="mt-0.5 shrink-0 text-[var(--primary)]"
+                />
+                <div>
+                  <p className="text-xs text-[var(--text-muted)] mb-1">
+                    Músculos trabalhados
+                  </p>
+                  <p className="text-sm capitalize">
+                    <strong className="font-semibold">
+                      {trMuscle(exercicio.target)}
+                    </strong>{" "}
+                    <span className="text-[var(--text-muted)]">(principal)</span>
+                  </p>
+                  {exercicio.secondaryMuscles?.length > 0 && (
+                    <p className="mt-1 text-sm capitalize text-[var(--text-secondary)]">
+                      {exercicio.secondaryMuscles.map(trMuscle).join(", ")}{" "}
+                      <span className="text-[var(--text-muted)]">
+                        (secundários)
+                      </span>
+                    </p>
+                  )}
+                </div>
+              </div>
 
-          {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
-        </div>
-      </div>
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-[var(--bg-muted)]">
+                <PersonStanding
+                  size={20}
+                  className="mt-0.5 shrink-0 text-[var(--primary)]"
+                />
+                <div>
+                  <p className="text-xs text-[var(--text-muted)] mb-1">
+                    Região do corpo
+                  </p>
+                  <p className="text-sm font-semibold capitalize">
+                    {trBodyPart(exercicio.bodyPart)}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-      <div className="bg-[var(--bg-subtle)] rounded-xl p-6">
-        <h3 className="mb-3">Passo a passo</h3>
-        <ol className="pl-5">
-          {passos.map((passo, i) => (
-            <li key={i} className="mb-2 text-sm text-[var(--text-secondary)]">{passo}</li>
-          ))}
-        </ol>
+            {/* <Button onClick={adicionarAFicha}>+ Adicionar à ficha</Button> */}
+          </div>
+        </section>
+
+        {/* passo a passo */}
+        <section className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-sm">
+          <h2 className="text-xl font-semibold mb-5">Passo a passo</h2>
+          <ol className="flex flex-col gap-5">
+            {passos.map((passo, i) => {
+              const { texto, dica } = splitDica(passo);
+              return (
+                <li key={i} className="flex gap-4">
+                  <span className="grid place-items-center shrink-0 w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--text-on-primary)] text-sm font-bold">
+                    {i + 1}
+                  </span>
+                  <div className="flex flex-col gap-2 pt-1 max-w-[75ch]">
+                    <p className="text-[15px] leading-relaxed text-[var(--text)]">
+                      {texto}
+                    </p>
+                    {dica && (
+                      <p className="px-3 py-2 rounded-lg text-sm leading-relaxed bg-[var(--bg-warning)] text-[var(--text-warning)]">
+                        {dica}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
       </div>
     </div>
   );

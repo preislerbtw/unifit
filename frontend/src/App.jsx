@@ -10,6 +10,7 @@ import Schedule from "./pages/Schedule";
 import Workouts from "./pages/Workouts";
 import WorkoutEditor from "./pages/WorkoutEditor";
 import Chat from "./pages/Chat";
+import ChatIA from "./pages/ChatIA";
 import Dashboard from "./pages/Dashboard";
 import Requests from "./pages/Requests";
 import Students from "./pages/Students";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/exercicios" element={<Exercises />} />
           <Route path="/exercicios/:id" element={<ExerciseDetail />} />
           <Route path="/Perfil" element={<Perfil />} />
+          <Route path="/assistente-ia" element={<ChatIA />} />
 
           {/* aluno */}
           <Route path="/home" element={only(STUDENT, <Home />)} />

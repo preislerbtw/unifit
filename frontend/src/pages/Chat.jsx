@@ -22,8 +22,9 @@ function time(iso) {
   });
 }
 
-// Chat entre aluno e professor (RF15).
-// Aluno: conversa com qualquer professor. Professor: conversa com seus alunos.
+// chat entre aluno e professor
+// aluno - conversa com qualquer professor 
+// professor - conversa com seus alunos
 function Chat() {
   const { partnerId } = useParams();
   const navigate = useNavigate();
@@ -193,13 +194,13 @@ function Chat() {
                 {messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`self-start max-w-[70%] px-3 py-2 rounded-[14px_14px_14px_4px] bg-[var(--bg-muted)] text-[var(--text)] max-md:max-w-[85%] ${
+                    className={`max-w-[70%] px-3 py-2 max-md:max-w-[85%] ${
                       m.from.id === session.userId
-                        ? "self-end !rounded-[14px_14px_4px_14px] !bg-[var(--primary)] !text-[var(--text-on-primary)]"
-                        : ""
+                        ? "self-end rounded-[14px_14px_4px_14px] bg-[var(--primary)] text-[var(--text-on-primary)]"
+                        : "self-start rounded-[14px_14px_14px_4px] bg-[var(--bg-muted)] text-[var(--text)]"
                     }`}
                   >
-                    <p className="[overflow-wrap:anywhere] text-sm">{m.text}</p>
+                    <p className="[overflow-wrap:anywhere] whitespace-pre-wrap text-sm">{m.text}</p>
                     <span className="block mt-0.5 text-[11px] opacity-70 text-right">{time(m.sentAt)}</span>
                   </div>
                 ))}

@@ -1,4 +1,6 @@
 const chatService = require("../services/chatService");
+const aiChatService = require("../services/aiChatService");
+
 async function enviar(req, res) {
   await chatService.enviar(req.body);
   res.status(201).json({ success: true });
@@ -14,4 +16,14 @@ async function listarConversas(req, res) {
   res.json(await chatService.listarConversas(req.params.userId));
 }
 
-module.exports = { enviar, listarMensagens, listarConversas };
+async function conversarComIa(req, res) {
+  const resposta = await aiChatService.responder(req.body.mensagens);
+  res.json({ resposta });
+}
+
+module.exports = {
+  enviar,
+  listarMensagens,
+  listarConversas,
+  conversarComIa,
+};

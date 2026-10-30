@@ -98,3 +98,21 @@ export function subscribeChat(
     clearInterval(interval);
   };
 }
+
+// history: [{ role: "user" | "assistant", content: string }]
+export async function sendAiMessage(history) {
+  const response = await fetch(`${API_URL}/chat-ia`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ mensagens: history }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Falha ao falar com a IA.");
+  }
+
+  const data = await response.json();
+  return data.resposta;
+}

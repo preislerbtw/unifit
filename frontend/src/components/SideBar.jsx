@@ -17,6 +17,7 @@ import {
   Inbox,
   Users,
   MessageCircle,
+  Bot,
 } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import { getSession, clearSession } from "../services/session";
@@ -30,6 +31,7 @@ const STUDENT_NAV = [
   { label: "Professores", to: "/professores", icon: GraduationCap },
   { label: "Agenda", to: "/agenda", icon: CalendarDays },
   { label: "Chat", to: "/chat", icon: MessageCircle },
+  { label: "IA", to: "/assistente-ia", icon: Bot },
 ];
 
 // menu do professor/admin
@@ -38,6 +40,7 @@ const STAFF_NAV = [
   { label: "Solicitações", to: "/solicitacoes", icon: Inbox },
   { label: "Alunos", to: "/alunos", icon: Users },
   { label: "Chat", to: "/chat", icon: MessageCircle },
+  { label: "Assistente IA", to: "/assistente-ia", icon: Bot },
   { label: "Exercícios", to: "/exercicios", icon: Dumbbell },
 ];
 
