@@ -8,4 +8,21 @@ async function buscarIdPorUsuario(idUsuario) {
   return linhas[0]?.idProfessor ?? null;
 }
 
-module.exports = { buscarIdPorUsuario };
+async function listar() {
+  const [linhas] = await db.query(
+    `SELECT
+       p.idProfessor,
+       u.idUsuario,
+       u.nome,
+       p.especialidade,
+       p.bio,
+       a.Nome AS academia
+     FROM professor p
+     JOIN usuario u ON u.idUsuario = p.usuario_idUsuario
+     JOIN academia a ON a.idAcademia = p.academia_idAcademia
+     ORDER BY u.nome`
+  );
+  return linhas;
+}
+
+module.exports = { buscarIdPorUsuario, listar };
