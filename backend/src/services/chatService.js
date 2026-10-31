@@ -17,8 +17,18 @@ async function listarMensagens(user1, user2) {
   return chatRepository.listarEntre(user1, user2);
 }
 
+// cada conversa: o contato (id de usuario, nome, perfil) e a última mensagem
 async function listarConversas(userId) {
-  return chatRepository.listarConversas(userId);
+  const linhas = await chatRepository.listarConversas(userId);
+  return linhas.map((linha) => ({
+    id: linha.id,
+    nome: linha.nome,
+    perfil: linha.perfil,
+    ultima: {
+      texto: linha.ultima_mensagem,
+      enviadaEm: linha.ultima_em,
+    },
+  }));
 }
 
 module.exports = { enviar, listarMensagens, listarConversas };

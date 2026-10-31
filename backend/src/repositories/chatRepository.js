@@ -21,10 +21,23 @@ async function listarEntre(user1, user2) {
 
 async function listarConversas(userId) {
   const [linhas] = await db.query(
-    `SELECT DISTINCT
-       CASE WHEN remetente_id = ? THEN destinatario_id ELSE remetente_id END AS id
-     FROM chat_mensagem
-     WHERE remetente_id = ? OR destinatario_id = ?`,
+    `SELECT
+  c.contato_id AS id,
+  u.nome,
+  u.perfil,
+  m.mensagem AS ultima_mensagem,
+  m.criada_em AS ultima_em
+  FROM (
+  SELECT
+    CASE WHEN remetente_id = ? THEN destinatario_id ELSE remetente_id END AS contato_id,
+    MAX(id) AS ultimo_id
+  FROM chat_mensagem
+  WHERE remetente_id = ? OR destinatario_id = ?
+  GROUP BY contato_id
+) c
+JOIN chat_mensagem m ON m.id = c.ultimo_id
+JOIN usuario u ON u.idUsuario = c.contato_id
+ORDER BY m.criada_em DESC`,
     [userId, userId, userId]
   );
   return linhas;
