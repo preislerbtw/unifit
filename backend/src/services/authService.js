@@ -14,12 +14,32 @@ async function cadastrar(dados) {
         throw new AppError(400, "Preencha nome, email, matricula e senha");
     }
 
+    // so aceita boolean de verdade, qualquer outra coisa vira false/true padrao
+    const quer_personal = dados.quer_personal !== false;
+    const aceitou_termos = dados.aceitou_termos === true;
+
+    if (!quer_personal && !aceitou_termos) {
+        throw new AppError(
+            400,
+            "Para treinar sem personal, é necessário aceitar o termo de responsabilidade."
+        );
+    }
+
     const senha_hash = await bcrypt.hash(dados.senha, 10);
 
     // o codigo e sorteado; se ja existir no banco, sorteia de novo
     for (let tentativa = 0; tentativa < 20; tentativa++) {
         try {
-            await usuarioRepository.criar({ ...dados, nome, email, matricula, senha_hash, codigo: gerarCodigo() });
+            await usuarioRepository.criar({
+                ...dados,
+                nome,
+                email,
+                matricula,
+                senha_hash,
+                quer_personal,
+                aceitou_termos: quer_personal ? false : aceitou_termos,
+                codigo: gerarCodigo(),
+            });
             return;
         } catch (erro) {
             if (!ehCodigoRepetido(erro)) throw erro;

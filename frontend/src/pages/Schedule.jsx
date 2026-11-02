@@ -48,6 +48,14 @@ const STATUS_CLASS = {
 // agendamentos encerrados (vão direto para o histórico)
 const CLOSED = ["cancelled", "rejected"];
 
+// texto do selo; mostra quem cancelou quando foi o professor
+function statusLabel(appointment) {
+  if (appointment.status === "cancelled" && appointment.cancelledBy === "professor") {
+    return "Cancelado pelo professor";
+  }
+  return STATUS_LABEL[appointment.status];
+}
+
 // junta "2026-10-05" + "14:00" em um objeto Date
 function toDate(appointment) {
   return new Date(`${appointment.date}T${appointment.time}:00`);
@@ -76,7 +84,7 @@ function AppointmentCard({ appointment, canCancel, onCancel }) {
         <div className={APPOINTMENT_TITLE}>
           <h3 className={APPOINTMENT_TITLE_H3}>{appointment.type}</h3>
           <span className={`${STATUS_BADGE} ${STATUS_CLASS[appointment.status] ?? ""}`}>
-            {STATUS_LABEL[appointment.status]}
+            {statusLabel(appointment)}
           </span>
         </div>
 
@@ -142,10 +150,12 @@ function Schedule() {
     );
     if (!ok) return;
 
-    await cancelAppointment(appointment.id);
+    await cancelAppointment(appointment.id, "aluno");
     setAppointments((list) =>
       list.map((a) =>
-        a.id === appointment.id ? { ...a, status: "cancelled" } : a
+        a.id === appointment.id
+          ? { ...a, status: "cancelled", cancelledBy: "aluno" }
+          : a
       )
     );
   }

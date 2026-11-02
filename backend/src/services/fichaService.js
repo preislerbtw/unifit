@@ -4,7 +4,8 @@ const professorRepository = require("../repositories/professorRepository");
 const usuarioRepository = require("../repositories/usuarioRepository");
 
 // Quem pode o quê:
-// - aluno:     vê as próprias fichas; edita só as que ele mesmo criou
+// - aluno COM personal: vê as próprias fichas; edita só as que ele mesmo criou
+// - aluno SEM personal (quer_personal = 0): vê e edita todas as próprias fichas, quando quiser
 // - professor: vê e edita todas as fichas dos alunos que o adicionaram pelo código
 // - admin:     tudo
 
@@ -58,6 +59,8 @@ async function podeVer(usuario, idDono) {
 async function podeEditar(usuario, ficha) {
   if (usuario.perfil === "admin") return true;
   if (String(usuario.idUsuario) === String(ficha.usuario_idUsuario)) {
+    // aluno que escolheu treinar sem personal altera qualquer ficha sua
+    if (usuario.perfil === "aluno" && !usuario.quer_personal) return true;
     return String(ficha.criado_por_idUsuario) === String(usuario.idUsuario);
   }
   return ehProfessorDoAluno(usuario, ficha.usuario_idUsuario);

@@ -13,6 +13,8 @@ const inicial = {
   curso: "",
   senha: "",
   confirmar: "",
+  querPersonal: "", // "sim" | "nao" | ""
+  aceitouTermos: false,
 };
 
 const INPUT_CLASS =
@@ -39,6 +41,12 @@ function validar(v) {
   if (v.confirmar !== v.senha) {
     erros.confirmar = "As senhas não coincidem.";
   }
+  if (!v.querPersonal) {
+    erros.querPersonal = "Escolha se deseja acompanhamento de personal.";
+  }
+  if (v.querPersonal === "nao" && !v.aceitouTermos) {
+    erros.aceitouTermos = "Você precisa aceitar os termos para continuar.";
+  }
 
   return erros;
 }
@@ -46,7 +54,7 @@ function validar(v) {
 function Campo({ label, erro, children }) {
   return (
     <div className="mb-5">
-      <label className="block text-sm font-semibold mb-1.5">{label}</label>
+      {label && <label className="block text-sm font-semibold mb-1.5">{label}</label>}
       {children}
       {erro && <span className="block mt-1.5 text-xs text-[var(--text-danger)]">{erro}</span>}
     </div>
@@ -62,8 +70,8 @@ function Register() {
   const [cadastrado, setCadastrado] = useState(false); // mostra o aviso antes de ir para o login
 
   function handleChange(e) {
-    const { name, value } = e.target;
-    setValores((v) => ({ ...v, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setValores((v) => ({ ...v, [name]: type === "checkbox" ? checked : value }));
     setErros((er) => ({ ...er, [name]: undefined })); // limpa o erro do campo
   }
 
@@ -85,6 +93,8 @@ function Register() {
         matricula: valores.matricula,
         curso: valores.curso,
         perfil: "aluno",
+        quer_personal: valores.querPersonal === "sim",
+        aceitou_termos: valores.querPersonal === "nao" ? valores.aceitouTermos : false,
       });
       setCadastrado(true);
     } catch (err) {
@@ -196,6 +206,50 @@ function Register() {
                 className={INPUT_CLASS}
               />
             </Campo>
+
+            <Campo label="Deseja acompanhamento de um personal?" erro={erros.querPersonal}>
+              <div className="flex gap-6 text-sm">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="querPersonal"
+                    value="sim"
+                    checked={valores.querPersonal === "sim"}
+                    onChange={handleChange}
+                  />
+                  Sim
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="querPersonal"
+                    value="nao"
+                    checked={valores.querPersonal === "nao"}
+                    onChange={handleChange}
+                  />
+                  Não
+                </label>
+              </div>
+            </Campo>
+
+            {valores.querPersonal === "nao" && (
+              <Campo erro={erros.aceitouTermos}>
+                <label className="flex items-start gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="aceitouTermos"
+                    checked={valores.aceitouTermos}
+                    onChange={handleChange}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    Declaro que treinarei por conta própria e concordo que a instituição
+                    não se responsabiliza por lesões ou danos decorrentes da prática de
+                    exercícios sem acompanhamento profissional.
+                  </span>
+                </label>
+              </Campo>
+            )}
 
             <button
               type="submit"

@@ -12,6 +12,18 @@ function me() {
   return getSession().userId;
 }
 
+// O usuário logado pode editar/excluir esta ficha?
+// - aluno SEM personal (querPersonal === false): qualquer ficha sua
+// - aluno COM personal: só as que ele mesmo criou (as do professor ficam só para leitura)
+// - professor/admin: liberado aqui; o back-end confere se o aluno é dele
+// (o back-end faz a mesma checagem, então isto serve só para mostrar ou esconder botões)
+export function canEditWorkout(workout, session = getSession()) {
+  if (session.role === "admin" || session.role === "professor") return true;
+  if (workout.ownerId !== session.userId) return false;
+  if (session.querPersonal === false) return true;
+  return workout.createdBy?.id === session.userId;
+}
+
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
     headers: { "Content-Type": "application/json" },

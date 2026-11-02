@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { getSession } from "../services/session";
-import {listWorkoutsOf, saveWorkout, makeLine,} from "../services/workoutsApi";
+import { listWorkoutsOf, saveWorkout, makeLine, canEditWorkout } from "../services/workoutsApi";
 import {
   MODAL_OVERLAY,
   MODAL_CARD,
@@ -30,7 +30,8 @@ function AddToWorkoutModal({ exercise, onClose, onDone }) {
 
   useEffect(() => {
     listWorkoutsOf(session.userId).then((list) => {
-      const editable = list.filter((w) => w.createdBy?.id === session.userId);
+      // aluno sem personal pode alterar qualquer ficha sua; os demais, só as que criaram
+      const editable = list.filter((w) => canEditWorkout(w, session));
       setMine(editable);
       if (editable.length > 0) setTarget(editable[0].id);
     });

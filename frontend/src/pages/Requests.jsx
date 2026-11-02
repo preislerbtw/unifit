@@ -3,6 +3,7 @@ import { Clock, MapPin, User, AlertTriangle } from "lucide-react";
 import {
   listAppointments,
   updateAppointmentStatus,
+  cancelAppointment,
   professorHasConfirmedAt,
   ConflictError,
 } from "../services/appointmentsApi";
@@ -52,6 +53,14 @@ const STATUS_CLASS = {
   confirmed: STATUS_CONFIRMED,
   cancelled: STATUS_CANCELLED,
 };
+
+// texto do selo; mostra quem cancelou
+function statusLabel(appointment) {
+  if (appointment.status === "cancelled" && appointment.cancelledBy === "professor") {
+    return "Cancelado pelo professor";
+  }
+  return STATUS_LABEL[appointment.status];
+}
 
 function Requests() {
   const [session] = useState(getSession);
@@ -106,7 +115,32 @@ function Requests() {
     );
   }
 
+  // o professor cancela um atendimento que já tinha aceitado
+  async function cancelByProfessor(appointment) {
+    setError("");
+    const ok = window.confirm(
+      `Cancelar ${appointment.type.toLowerCase()} com ${appointment.studentName}? O aluno verá o cancelamento na agenda.`
+    );
+    if (!ok) return;
+
+    try {
+      await cancelAppointment(appointment.id, "professor");
+    } catch {
+      setError("Não foi possível cancelar o atendimento. Tente novamente.");
+      return;
+    }
+
+    setAppointments((list) =>
+      list.map((a) =>
+        a.id === appointment.id
+          ? { ...a, status: "cancelled", cancelledBy: "professor" }
+          : a
+      )
+    );
+  }
+
   const list = tab === "pending" ? pending : answered;
+  const now = new Date();
 
   return (
     <div className={DASHBOARD_PAGE}>
@@ -157,6 +191,8 @@ function Requests() {
           const conflict =
             a.status === "pending" &&
             professorHasConfirmedAt(appointments, a.professorId, a, a.id);
+          // atendimento aceito e ainda por vir: o professor pode cancelar
+          const canCancel = a.status === "confirmed" && toDate(a) >= now;
 
           return (
             <article key={a.id} className={REQUEST_CARD}>
@@ -169,7 +205,7 @@ function Requests() {
                 <div className={REQUEST_TITLE}>
                   <h3>{a.type}</h3>
                   <span className={`${STATUS_BADGE} ${STATUS_CLASS[a.status] ?? ""}`}>
-                    {STATUS_LABEL[a.status]}
+                    {statusLabel(a)}
                   </span>
                 </div>
                 <p className={REQUEST_INFO_P}>
@@ -206,6 +242,17 @@ function Requests() {
                     onClick={() => answer(a, "rejected")}
                   >
                     Recusar
+                  </button>
+                </div>
+              )}
+
+              {canCancel && (
+                <div className={REQUEST_ACTIONS}>
+                  <button
+                    className={`${REQUEST_REJECT} ${REQUEST_ACTIONS_CHILD}`}
+                    onClick={() => cancelByProfessor(a)}
+                  >
+                    Cancelar
                   </button>
                 </div>
               )}

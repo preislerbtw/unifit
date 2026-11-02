@@ -21,9 +21,11 @@ async function criar(usuario) {
           curso,
           altura,
           peso,
-          codigo
+          codigo,
+          quer_personal,
+          aceitou_termos
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
             usuario.nome,
@@ -38,6 +40,8 @@ async function criar(usuario) {
             usuario.altura,
             usuario.peso,
             usuario.codigo,
+            usuario.quer_personal ? 1 : 0,
+            usuario.aceitou_termos ? 1 : 0,
         ]
     );
 }

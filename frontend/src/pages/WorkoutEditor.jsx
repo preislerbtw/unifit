@@ -4,7 +4,7 @@ import { Plus, Trash2, ArrowLeft, ChevronUp, ChevronDown } from "lucide-react";
 import ExercisePicker from "../components/ExercisePicker";
 import { getSession } from "../services/session";
 import { getStudentOfProfessor } from "../services/studentsApi";
-import { getWorkout, saveWorkout, makeLine } from "../services/workoutsApi";
+import { getWorkout, saveWorkout, makeLine, canEditWorkout } from "../services/workoutsApi";
 import { levelLabel, levelRank } from "../utils/levels";
 import {
   PROF_BTN,
@@ -97,8 +97,11 @@ function WorkoutEditor() {
     };
   }, [workoutId, ownerId, isStaff, studentId, backTo, navigate, session]);
 
-  // o aluno só edita as fichas que ele mesmo criou; o professor edita todas as do aluno
-  const readOnly = Boolean(workout) && !isStaff && workout.createdBy?.id !== session.userId;
+  // só leitura quando o usuário não pode editar a ficha:
+  // - aluno sem personal edita todas as suas fichas
+  // - aluno com personal edita só as que ele criou
+  // - professor edita todas as do aluno
+  const readOnly = Boolean(workout) && !canEditWorkout(workout, session);
 
   function updateLine(lineId, field, value) {
     setLines((list) =>
@@ -142,19 +145,19 @@ function WorkoutEditor() {
     setSaving(true);
     try {
       await saveWorkout({
-      ...(workout ?? {}),
-      ownerId,
-      ownerName: owner.name,
-      ownerLevel: owner.level,
-      name: name.trim(),
-      goal: goal.trim(),
-      createdBy:
-        workout?.createdBy ?? { id: session.userId, role: session.role, name: session.name },
-      exercises: lines.map((l) => ({
-        ...l,
-        sets: Math.max(1, Number(l.sets) || 1),
-        reps: Math.max(1, Number(l.reps) || 1),
-      })),
+        ...(workout ?? {}),
+        ownerId,
+        ownerName: owner.name,
+        ownerLevel: owner.level,
+        name: name.trim(),
+        goal: goal.trim(),
+        createdBy:
+          workout?.createdBy ?? { id: session.userId, role: session.role, name: session.name },
+        exercises: lines.map((l) => ({
+          ...l,
+          sets: Math.max(1, Number(l.sets) || 1),
+          reps: Math.max(1, Number(l.reps) || 1),
+        })),
       });
     } catch (err) {
       setError(err.message);

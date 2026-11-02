@@ -1,8 +1,9 @@
-// armazenamento provisório no navegador (localStorage).
-// quando o back-end existir (tabela AGENDAMENTO), troque o corpo destas funções
-// por chamadas fetch: GET /agendamentos, POST /agendamentos, PATCH /agendamentos/:id
-const KEY = "unifit:appointments";
-const ACTIVE = ["pending", "confirmed"];
+// agendamentos: conversa com o back-end (tabela AGENDAMENTO)
+//   GET   /agendamentos
+//   GET   /agendamentos/ocupados
+//   POST  /agendamentos
+//   PATCH /agendamentos/:id/status
+const API_URL = "http://localhost:3000";
 
 export class ConflictError extends Error {
   constructor(message) {
@@ -11,29 +12,32 @@ export class ConflictError extends Error {
   }
 }
 
-function read() {
-  try {
-    return JSON.parse(localStorage.getItem(KEY)) ?? [];
-  } catch {
-    return [];
-  }
-}
+async function request(path, options = {}) {
+  const response = await fetch(`${API_URL}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
 
-function write(list) {
+  let resultado = null;
   try {
-    localStorage.setItem(KEY, JSON.stringify(list));
+    resultado = await response.json();
   } catch {
-    // localStorage indisponível: ignora
+    // resposta sem corpo JSON
   }
-}
 
-function newId() {
-  return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+  if (!response.ok) {
+    const message = resultado?.message || "Erro ao comunicar com o servidor.";
+    // 409 = horario em conflito: o front mostra a mensagem ao usuario
+    if (response.status === 409) throw new ConflictError(message);
+    throw new Error(message);
+  }
+
+  return resultado;
 }
 
 const sameSlot = (a, b) => a.date === b.date && a.time === b.time;
 
-// Regras de conflito:
+// Regras de conflito (o back-end tambem valida):
 // - o aluno não pode ter dois agendamentos ativos (pendente ou confirmado) no mesmo horário;
 // - o professor não pode ter dois atendimentos CONFIRMADOS no mesmo horário.
 //   (vários alunos podem pedir o mesmo horário; só um pode ser aceito)
@@ -47,59 +51,42 @@ export function professorHasConfirmedAt(list, professorId, slot, ignoreId) {
   );
 }
 
-export async function listAppointments() {
-  return read();
+// filtros opcionais: { alunoId, professorId }
+export async function listAppointments(filtros = {}) {
+  const params = new URLSearchParams();
+  if (filtros.alunoId) params.set("alunoId", filtros.alunoId);
+  if (filtros.professorId) params.set("professorId", filtros.professorId);
+
+  const query = params.toString();
+  return request(`/agendamentos${query ? `?${query}` : ""}`);
 }
 
 // horários já ocupados em um dia (usado para desabilitar opções no formulário)
 export async function getBusySlots({ professorId, studentId, date }) {
-  const list = read();
-  return {
-    professor: list
-      .filter((a) => a.professorId === professorId && a.status === "confirmed" && a.date === date)
-      .map((a) => a.time),
-    student: list
-      .filter((a) => a.studentId === studentId && ACTIVE.includes(a.status) && a.date === date)
-      .map((a) => a.time),
-  };
+  const params = new URLSearchParams({ data: date });
+  if (professorId) params.set("professorId", professorId);
+  if (studentId) params.set("alunoId", studentId);
+
+  return request(`/agendamentos/ocupados?${params.toString()}`);
 }
 
 export async function createAppointment(data) {
-  const list = read();
-
-  if (
-    data.studentId &&
-    list.some(
-      (a) =>
-        a.studentId === data.studentId &&
-        ACTIVE.includes(a.status) &&
-        sameSlot(a, data)
-    )
-  ) {
-    throw new ConflictError("Você já tem um agendamento neste dia e horário.");
-  }
-
-  if (professorHasConfirmedAt(list, data.professorId, data)) {
-    throw new ConflictError("Este horário já foi reservado por outro aluno.");
-  }
-
-  const appointment = { id: newId(), status: "pending", ...data };
-  write([...list, appointment]);
-  return appointment;
+  return request("/agendamentos", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
-// status: "pending" | "confirmed" | "rejected" | "cancelled"
-export async function updateAppointmentStatus(id, status) {
-  const list = read();
-  const target = list.find((a) => a.id === id);
-
-  if (status === "confirmed" && target && professorHasConfirmedAt(list, target.professorId, target, id)) {
-    throw new ConflictError("Você já tem um atendimento confirmado neste horário.");
-  }
-
-  write(list.map((a) => (a.id === id ? { ...a, status } : a)));
+// status: "confirmed" | "rejected" | "cancelled"
+// extra: campos adicionais (ex.: { cancelledBy: "professor" })
+export async function updateAppointmentStatus(id, status, extra = {}) {
+  return request(`/agendamentos/${id}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status, ...extra }),
+  });
 }
 
-export async function cancelAppointment(id) {
-  return updateAppointmentStatus(id, "cancelled");
+// by: quem cancelou ("aluno" | "professor")
+export async function cancelAppointment(id, by = "aluno") {
+  return updateAppointmentStatus(id, "cancelled", { cancelledBy: by });
 }

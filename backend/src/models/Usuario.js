@@ -13,6 +13,8 @@ function toPublico(row, professorId = null) {
     altura: row.altura,
     peso: row.peso,
     codigo: row.codigo,
+    quer_personal: !!row.quer_personal,
+    aceitou_termos: !!row.aceitou_termos,
     professorId,
   };
 }

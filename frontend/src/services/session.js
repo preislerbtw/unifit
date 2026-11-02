@@ -47,5 +47,7 @@ export function sessaoDeUsuario(usuario) {
     peso: usuario.peso,
     codigo: usuario.codigo,
     level: usuario.nivel_experiencia || undefined,
+    // tarefa 1/3: true = aluno tem personal; false = treina sozinho
+    querPersonal: usuario.quer_personal ?? true,
   };
 }
