@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import logo from "../assets/logo.png";
 import banner from "../assets/foto_unifor.jpg";
 import { cadastrar } from "../services/authApi";
+import WelcomeNoticeModal from "../components/WelcomeNoticeModal";
 
 const inicial = {
   nome: "",
@@ -58,6 +59,7 @@ function Register() {
   const [erros, setErros] = useState({});
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [cadastrado, setCadastrado] = useState(false); // mostra o aviso antes de ir para o login
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -84,7 +86,7 @@ function Register() {
         curso: valores.curso,
         perfil: "aluno",
       });
-      navigate("/", { state: { cadastrado: true } });
+      setCadastrado(true);
     } catch (err) {
       setErros((er) => ({
         ...er,
@@ -218,6 +220,13 @@ function Register() {
       <p className="absolute bottom-5 left-10 text-[var(--text-on-primary)] text-[13px] max-[900px]:text-[var(--text-muted)] max-[900px]:left-5">
         Fundação Edson Queiroz | UniFit
       </p>
+
+      {cadastrado && (
+        <WelcomeNoticeModal
+          nome={valores.nome}
+          onConfirm={() => navigate("/", { state: { cadastrado: true } })}
+        />
+      )}
     </div>
   );
 }

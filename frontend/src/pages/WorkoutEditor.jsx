@@ -97,8 +97,8 @@ function WorkoutEditor() {
     };
   }, [workoutId, ownerId, isStaff, studentId, backTo, navigate, session]);
 
-  // só quem criou a ficha pode editar
-  const readOnly = Boolean(workout) && workout.createdBy?.id !== session.userId;
+  // o aluno só edita as fichas que ele mesmo criou; o professor edita todas as do aluno
+  const readOnly = Boolean(workout) && !isStaff && workout.createdBy?.id !== session.userId;
 
   function updateLine(lineId, field, value) {
     setLines((list) =>
@@ -140,7 +140,8 @@ function WorkoutEditor() {
     }
 
     setSaving(true);
-    await saveWorkout({
+    try {
+      await saveWorkout({
       ...(workout ?? {}),
       ownerId,
       ownerName: owner.name,
@@ -154,7 +155,12 @@ function WorkoutEditor() {
         sets: Math.max(1, Number(l.sets) || 1),
         reps: Math.max(1, Number(l.reps) || 1),
       })),
-    });
+      });
+    } catch (err) {
+      setError(err.message);
+      setSaving(false);
+      return;
+    }
     navigate(backTo, {
       state: { notice: workout ? "Ficha atualizada." : "Ficha criada." },
     });

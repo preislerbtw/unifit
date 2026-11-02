@@ -32,10 +32,8 @@ function StudentDetail() {
     Promise.all([getStudentOfProfessor(session, studentId), listWorkoutsOf(studentId)])
       .then(([s, w]) => {
         setStudent(s);
-        // o professor vê as fichas que criou (o admin vê todas)
-        setWorkouts(
-          w.filter((x) => session.role === "admin" || x.createdBy?.id === session.userId)
-        );
+        // o professor vê todas as fichas do aluno, inclusive as que o aluno montou
+        setWorkouts(w);
       })
       .finally(() => setLoading(false));
   }, [session, studentId]);
@@ -48,7 +46,12 @@ function StudentDetail() {
 
   async function handleDelete(workout) {
     if (!window.confirm(`Excluir a ficha "${workout.name}"?`)) return;
-    await deleteWorkout(workout.id);
+    try {
+      await deleteWorkout(workout.id);
+    } catch (err) {
+      setNotice(err.message);
+      return;
+    }
     setWorkouts((list) => list.filter((w) => w.id !== workout.id));
     setNotice("Ficha excluída.");
   }
@@ -61,7 +64,7 @@ function StudentDetail() {
         <Link to="/alunos" className={WORKOUTS_BACK}>
           <ArrowLeft size={16} /> Voltar
         </Link>
-        <div className={WORKOUTS_EMPTY}>Aluno não encontrado entre os seus atendimentos.</div>
+        <div className={WORKOUTS_EMPTY}>Aluno não encontrado entre os seus alunos.</div>
       </div>
     );
   }
@@ -103,7 +106,7 @@ function StudentDetail() {
 
       {workouts.length === 0 && (
         <div className={WORKOUTS_EMPTY}>
-          <p>Você ainda não criou fichas para {student.name}.</p>
+          <p>{student.name} ainda não tem fichas.</p>
           <Link
             to={`/alunos/${student.id}/fichas/nova`}
             className={`${PROF_BTN} ${PROF_BTN_PRIMARY} ${FLEX_NONE_NO_UNDERLINE}`}

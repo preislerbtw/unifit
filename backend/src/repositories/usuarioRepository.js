@@ -20,9 +20,10 @@ async function criar(usuario) {
           matricula,
           curso,
           altura,
-          peso
+          peso,
+          codigo
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
             usuario.nome,
@@ -36,6 +37,7 @@ async function criar(usuario) {
             usuario.curso,
             usuario.altura,
             usuario.peso,
+            usuario.codigo,
         ]
     );
 }
@@ -51,4 +53,24 @@ async function atualizarMedidas(idUsuario, peso, altura) {
     );
     return resultado.affectedRows;
 }
-module.exports = { buscarPorMatricula, criar, atualizarMedidas };
+async function buscarPorId(idUsuario) {
+    const [linhas] = await db.query("SELECT * FROM usuario WHERE idUsuario = ?", [idUsuario]);
+    return linhas[0] ?? null;
+}
+
+async function buscarPorCodigo(codigo) {
+    const [linhas] = await db.query("SELECT * FROM usuario WHERE codigo = ?", [codigo]);
+    return linhas[0] ?? null;
+}
+
+async function listarAlunos() {
+    const [linhas] = await db.query(
+        `SELECT idUsuario, nome, nivel_experiencia, matricula, curso
+         FROM usuario
+         WHERE perfil = 'aluno'
+         ORDER BY nome`
+    );
+    return linhas;
+}
+
+module.exports = { buscarPorMatricula, buscarPorId, buscarPorCodigo, listarAlunos, criar, atualizarMedidas };

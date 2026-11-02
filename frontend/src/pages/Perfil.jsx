@@ -101,12 +101,10 @@ function Perfil() {
           </div>
         )}
 
-        {usuario.idUsuario != null && (
+        {usuario.codigo && (
           <div className={DADO_BOX}>
-            <span className={DADO_LABEL}>ID do Usuário</span>
-            <span className={DADO_VALOR}>
-              {String(usuario.idUsuario).padStart(4, "0")}
-            </span>
+            <span className={DADO_LABEL}>Código</span>
+            <span className={DADO_VALOR}>{usuario.codigo}</span>
           </div>
         )}
 

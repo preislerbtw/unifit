@@ -45,6 +45,7 @@ export function sessaoDeUsuario(usuario) {
     curso: usuario.curso,
     altura: usuario.altura,
     peso: usuario.peso,
+    codigo: usuario.codigo,
     level: usuario.nivel_experiencia || undefined,
   };
 }

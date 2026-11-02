@@ -40,9 +40,11 @@ CREATE TABLE IF NOT EXISTS `academia`.`usuario` (
   `curso` VARCHAR(100) NULL,
   `altura` DECIMAL(5,2) NULL,
   `peso` DECIMAL(5,2) NULL,
+  `codigo` CHAR(4) NULL,
   PRIMARY KEY (`idUsuario`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
-  UNIQUE INDEX `matricula_UNIQUE` (`matricula` ASC) VISIBLE)
+  UNIQUE INDEX `matricula_UNIQUE` (`matricula` ASC) VISIBLE,
+  UNIQUE INDEX `codigo_UNIQUE` (`codigo` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -55,13 +57,19 @@ CREATE TABLE IF NOT EXISTS `academia`.`ficha_treino` (
   `nome` VARCHAR(100) NOT NULL,
   `objetivo` VARCHAR(255) NOT NULL,
   `criada_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `criado_por_idUsuario` INT NULL,
+  `atualizada_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`idFicha_treino`),
   INDEX `fk_ficha_treino_usuario1_idx` (`usuario_idUsuario` ASC) VISIBLE,
+  INDEX `fk_ficha_treino_criado_por_idx` (`criado_por_idUsuario` ASC) VISIBLE,
   CONSTRAINT `fk_ficha_treino_usuario1`
     FOREIGN KEY (`usuario_idUsuario`)
     REFERENCES `academia`.`usuario` (`idUsuario`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ficha_treino_criado_por`
+    FOREIGN KEY (`criado_por_idUsuario`)
+    REFERENCES `academia`.`usuario` (`idUsuario`))
 ENGINE = InnoDB;
 
 
@@ -101,11 +109,17 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `academia`.`ficha_exercicio` (
   `ficha_treino_idFicha_treino` INT NOT NULL,
   `idFicha_exercicio` INT NOT NULL AUTO_INCREMENT,
-  `exercicio_idExercicio` INT NOT NULL,
+  `exercicio_idExercicio` INT NULL,
   `ordem` INT NOT NULL,
   `series` INT NULL,
   `repeticoes` INT NULL,
-  `carga` DECIMAL(6,2) NULL,
+  `carga` VARCHAR(20) NULL,
+  -- o front usa o catalogo de exercises.json; os dados do exercicio ficam guardados na ficha
+  `exercicio_ref` VARCHAR(100) NULL,
+  `exercicio_nome` VARCHAR(150) NULL,
+  `parte_corpo` VARCHAR(45) NULL,
+  `equipamento` VARCHAR(45) NULL,
+  `dificuldade` VARCHAR(45) NULL,
   INDEX `fk_ficha_exercicio_ficha_treino1_idx` (`ficha_treino_idFicha_treino` ASC) VISIBLE,
   PRIMARY KEY (`idFicha_exercicio`),
   INDEX `fk_ficha_exercicio_exercicio1_idx` (`exercicio_idExercicio` ASC) VISIBLE,
@@ -342,6 +356,24 @@ CREATE TABLE IF NOT EXISTS `academia`.`chat_mensagem` (
 )
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `academia`.`professor_aluno`
+-- -----------------------------------------------------
+-- vinculo criado quando o aluno adiciona o professor pelo codigo
+CREATE TABLE IF NOT EXISTS `academia`.`professor_aluno` (
+  `professor_idProfessor` INT NOT NULL,
+  `aluno_idUsuario` INT NOT NULL,
+  `criado_em` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`professor_idProfessor`, `aluno_idUsuario`),
+  INDEX `fk_professor_aluno_usuario1_idx` (`aluno_idUsuario` ASC) VISIBLE,
+  CONSTRAINT `fk_professor_aluno_professor1`
+    FOREIGN KEY (`professor_idProfessor`)
+    REFERENCES `academia`.`professor` (`idProfessor`),
+  CONSTRAINT `fk_professor_aluno_usuario1`
+    FOREIGN KEY (`aluno_idUsuario`)
+    REFERENCES `academia`.`usuario` (`idUsuario`))
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

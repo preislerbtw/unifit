@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, CalendarPlus, MessageCircle, MapPin } from "lucide-react";
+import { Search, CalendarPlus, MessageCircle, MapPin, Plus } from "lucide-react";
 import AppointmentModal from "../components/AppointmentModal";
-import { listarProfessores } from "../services/professoresApi";
+import AddByCodeModal from "../components/AddByCodeModal";
+import { listarMeusProfessores, adicionarProfessor } from "../services/professoresApi";
+import { getSession } from "../services/session";
 import { createAppointment } from "../services/appointmentsApi";
 import {
   PROF_PAGE,
@@ -41,19 +43,21 @@ function formatarData(iso) {
 
 function Professors() {
   const navigate = useNavigate();
+  const [session] = useState(getSession);
 
   const [professores, setProfessores] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
   const [selecionado, setSelecionado] = useState(null); // professor do modal
+  const [adicionando, setAdicionando] = useState(false); // modal do código
   const [aviso, setAviso] = useState("");
 
   useEffect(() => {
-    listarProfessores()
+    listarMeusProfessores(session.idUsuario)
       .then(setProfessores)
       .catch((err) => console.error(err))
       .finally(() => setCarregando(false));
-  }, []);
+  }, [session.idUsuario]);
 
   // some o aviso depois de 5 segundos
   useEffect(() => {
@@ -68,7 +72,7 @@ function Professors() {
     return professores.filter(
       (p) =>
         p.nome.toLowerCase().includes(termo) ||
-        p.especialidade.toLowerCase().includes(termo),
+        (p.especialidade ?? "").toLowerCase().includes(termo),
     );
   }, [busca, professores]);
 
@@ -93,17 +97,34 @@ function Professors() {
     );
   }
 
+  async function confirmarProfessor(codigo) {
+    const prof = await adicionarProfessor(session.idUsuario, codigo);
+    setProfessores((lista) =>
+      [...lista, prof].sort((a, b) => a.nome.localeCompare(b.nome)),
+    );
+    setAdicionando(false);
+    setAviso(`${prof.nome} foi adicionado aos seus professores.`);
+  }
+
   function conversar(prof) {
-    navigate(`/chat/professor-${prof.id}`);
-    //setAviso(`O chat com ${prof.nome} não está disponivel no momento!`); // fix: implementing chat interaction
+    // o chat usa o id de usuário do professor
+    navigate(`/chat/${prof.usuarioId}`);
   }
 
   return (
     <div className={PROF_PAGE}>
-      <h1 className="mb-1">Professores</h1>
+      <div className="flex items-center justify-between gap-4 mb-1">
+        <h1>Professores</h1>
+        <button
+          className={`${PROF_BTN} ${PROF_BTN_PRIMARY} flex-none`}
+          onClick={() => setAdicionando(true)}
+        >
+          <Plus size={16} /> Adicionar
+        </button>
+      </div>
       <p className={PROF_SUBTITLE}>
-        Conheça os professores, agende uma avaliação física ou aula e converse
-        com eles.
+        Adicione seus professores pelo código, agende uma avaliação física ou
+        aula e converse com eles.
       </p>
 
       <div className={PROF_SEARCH}>
@@ -162,9 +183,22 @@ function Professors() {
               </article>
             ))
           ) : (
-            <p>Nenhum professor encontrado.</p>
+            <p>
+              {professores.length === 0
+                ? "Você ainda não adicionou nenhum professor. Clique em Adicionar e digite o código dele."
+                : "Nenhum professor encontrado."}
+            </p>
           )}
         </div>
+      )}
+
+      {adicionando && (
+        <AddByCodeModal
+          title="Adicionar professor"
+          subtitle="Peça ao professor o código que aparece no perfil dele."
+          onClose={() => setAdicionando(false)}
+          onConfirm={confirmarProfessor}
+        />
       )}
 
       {selecionado && (

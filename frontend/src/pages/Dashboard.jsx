@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { listAppointments } from "../services/appointmentsApi";
 import { listWorkouts } from "../services/workoutsApi";
+import { listStudentsOfProfessor } from "../services/studentsApi";
 import { getSession } from "../services/session";
 import { toDate, todayISO, dateParts } from "../utils/appointmentDate";
 import {
@@ -39,11 +40,13 @@ function Dashboard() {
   const [session] = useState(getSession);
   const [appointments, setAppointments] = useState([]);
   const [workouts, setWorkouts] = useState([]);
+  const [studentCount, setStudentCount] = useState(0);
 
   useEffect(() => {
     listAppointments().then(setAppointments);
     listWorkouts().then(setWorkouts);
-  }, []);
+    listStudentsOfProfessor(session).then((list) => setStudentCount(list.length));
+  }, [session]);
 
   // o professor vê só os próprios dados; o admin vê todos
   const mine = useMemo(
@@ -76,11 +79,6 @@ function Dashboard() {
       pending: mine.filter((a) => a.status === "pending").length,
       today: upcoming.filter((a) => a.date === today).length,
       upcoming,
-      students: new Set(
-        mine
-          .filter((a) => a.status === "confirmed")
-          .map((a) => a.studentId ?? a.studentName),
-      ).size,
     };
   }, [mine]);
 
@@ -98,8 +96,8 @@ function Dashboard() {
       icon: CalendarDays,
     },
     {
-      label: "Alunos atendidos",
-      value: stats.students,
+      label: session.role === "admin" ? "Alunos" : "Meus alunos",
+      value: studentCount,
       icon: Users,
       to: "/alunos",
     },

@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Calendar } from "lucide-react";
+import { Calendar, Plus } from "lucide-react";
+import AddByCodeModal from "../components/AddByCodeModal";
 import { getSession } from "../services/session";
-import { listStudentsOfProfessor } from "../services/studentsApi";
+import { listStudentsOfProfessor, addStudentByCode } from "../services/studentsApi";
 import { listWorkouts } from "../services/workoutsApi";
 import { levelLabel } from "../utils/levels";
 import { dateParts } from "../utils/appointmentDate";
-import { PROF_BTN, PROF_BTN_PRIMARY, PROF_BTN_SECONDARY, PROFESSOR_TAG } from "../styles/professorsClasses";
+import {
+  PROF_BTN,
+  PROF_BTN_PRIMARY,
+  PROF_BTN_SECONDARY,
+  PROF_NOTICE,
+  PROFESSOR_TAG,
+} from "../styles/professorsClasses";
 import {
   DASHBOARD_PAGE,
   DASHBOARD_SUBTITLE,
@@ -33,6 +40,8 @@ function Students() {
   const [students, setStudents] = useState([]);
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     Promise.all([listStudentsOfProfessor(session), listWorkouts()])
@@ -43,26 +52,54 @@ function Students() {
       .finally(() => setLoading(false));
   }, [session]);
 
-  // fichas que este professor criou para o aluno (o admin vê todas)
-  const countFor = (studentId) =>
-    workouts.filter(
-      (w) =>
-        w.ownerId === studentId &&
-        (session.role === "admin" || w.createdBy?.id === session.userId)
-    ).length;
+  useEffect(() => {
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(""), 5000);
+    return () => clearTimeout(t);
+  }, [notice]);
+
+  async function confirmStudent(codigo) {
+    const name = await addStudentByCode(session, codigo);
+    // recarrega para trazer as fichas que o aluno já tinha
+    const [s, w] = await Promise.all([listStudentsOfProfessor(session), listWorkouts()]);
+    setStudents(s);
+    setWorkouts(w);
+    setAdding(false);
+    setNotice(`${name} foi adicionado aos seus alunos.`);
+  }
+
+  // fichas do aluno (as que ele montou e as que os professores criaram)
+  const countFor = (studentId) => workouts.filter((w) => w.ownerId === studentId).length;
 
   return (
     <div className={DASHBOARD_PAGE}>
-      <h1>Alunos</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1>Alunos</h1>
+        {session.role === "professor" && (
+          <button
+            className={`${PROF_BTN} ${PROF_BTN_PRIMARY} flex-none`}
+            onClick={() => setAdding(true)}
+          >
+            <Plus size={16} /> Adicionar
+          </button>
+        )}
+      </div>
       <p className={DASHBOARD_SUBTITLE}>
-        Alunos com atendimento confirmado. Abra um aluno para criar e editar as fichas dele.
+        Alunos ligados a você pelo código. Abra um aluno para ver e editar as fichas dele.
       </p>
+
+      {notice && (
+        <p className={PROF_NOTICE} role="status">
+          {notice}
+        </p>
+      )}
 
       {loading && <p>Carregando alunos...</p>}
 
       {!loading && students.length === 0 && (
         <div className={DASHBOARD_EMPTY}>
-          Você ainda não tem alunos. Aceite uma solicitação em <Link to="/solicitacoes">Solicitações</Link>.
+          Você ainda não tem alunos. Clique em Adicionar e digite o código do aluno, ou passe o
+          seu código (está no <Link to="/Perfil">Perfil</Link>) para ele adicionar você.
         </div>
       )}
 
@@ -81,7 +118,7 @@ function Students() {
               <p className={STUDENT_INFO_P}>
                 {s.appointments}{" "}
                 {s.appointments === 1 ? "atendimento" : "atendimentos"} · {countFor(s.id)}{" "}
-                {countFor(s.id) === 1 ? "ficha criada" : "fichas criadas"}
+                {countFor(s.id) === 1 ? "ficha" : "fichas"}
               </p>
               {s.next && (
                 <p className={STUDENT_INFO_P}>
@@ -111,6 +148,15 @@ function Students() {
           </article>
         ))}
       </div>
+
+      {adding && (
+        <AddByCodeModal
+          title="Adicionar aluno"
+          subtitle="Peça ao aluno o código que aparece no perfil dele."
+          onClose={() => setAdding(false)}
+          onConfirm={confirmStudent}
+        />
+      )}
     </div>
   );
 }

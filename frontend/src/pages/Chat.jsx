@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Send } from "lucide-react";
 import { getSession } from "../services/session";
-import { listarProfessores } from "../services/professoresApi";
+import { listarMeusProfessores } from "../services/professoresApi";
 import { listStudentsOfProfessor } from "../services/studentsApi";
 import {
   conversationId,
@@ -23,8 +23,9 @@ function time(iso) {
 }
 
 // chat entre aluno e professor
-// aluno - conversa com qualquer professor 
-// professor - conversa com seus alunos
+// os ids dos contatos são ids de usuário (os mesmos de chat_mensagem)
+// aluno - conversa com os professores que adicionou pelo código
+// professor - conversa com os alunos que o adicionaram
 function Chat() {
   const { partnerId } = useParams();
   const navigate = useNavigate();
@@ -41,10 +42,10 @@ function Chat() {
   useEffect(() => {
     async function load() {
       if (isStudent) {
-        const profs = await listarProfessores();
+        const profs = await listarMeusProfessores(session.idUsuario);
         setBaseContacts(
           profs.map((p) => ({
-            id: `professor-${p.id}`,
+            id: String(p.usuarioId),
             name: p.nome,
             subtitle: p.especialidade,
           })),
@@ -89,13 +90,16 @@ function Chat() {
   }, [refresh]);
 
   // junta os contatos com as conversas já existentes
+  // (conversa: { id, nome, perfil, ultima: { texto, enviadaEm } })
   const contacts = useMemo(() => {
     const map = new Map(baseContacts.map((c) => [c.id, { ...c, last: null }]));
     for (const conv of convs) {
-      const id = isStudent ? conv.professorId : conv.studentId;
-      const name = isStudent ? conv.professorName : conv.studentName;
-      const entry = map.get(id) ?? { id, name, subtitle: "" };
-      map.set(id, { ...entry, last: conv.last });
+      const id = String(conv.id);
+      const entry = map.get(id) ?? { id, name: conv.nome, subtitle: "" };
+      map.set(id, {
+        ...entry,
+        last: conv.ultima ? { text: conv.ultima.texto, sentAt: String(conv.ultima.enviadaEm) } : null,
+      });
     }
     return [...map.values()].sort((a, b) => {
       // conversas com mensagem recente primeiro
@@ -103,7 +107,7 @@ function Chat() {
       const tb = b.last?.sentAt ?? "";
       return tb.localeCompare(ta) || a.name.localeCompare(b.name);
     });
-  }, [baseContacts, convs, isStudent]);
+  }, [baseContacts, convs]);
 
   const partner = contacts.find((c) => c.id === partnerId) ?? null;
 
@@ -143,8 +147,8 @@ function Chat() {
           {contacts.length === 0 && (
             <p className="p-6 text-center text-sm text-[var(--text-muted)]">
               {isStudent
-                ? "Nenhum professor disponível."
-                : "Você ainda não tem alunos para conversar. Aceite uma solicitação primeiro."}
+                ? "Você ainda não adicionou professores. Adicione pelo código na aba Professores."
+                : "Você ainda não tem alunos. Passe o seu código (no Perfil) para seus alunos."}
             </p>
           )}
           {contacts.map((c) => (

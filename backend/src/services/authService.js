@@ -3,6 +3,7 @@ const AppError = require("../errors/AppError");
 const Usuario = require("../models/Usuario");
 const usuarioRepository = require("../repositories/usuarioRepository");
 const professorRepository = require("../repositories/professorRepository");
+const { gerarCodigo } = require("../utils/codigoUsuario");
 
 async function cadastrar(dados) {
     const nome = String(dados.nome ?? "").trim();
@@ -14,7 +15,21 @@ async function cadastrar(dados) {
     }
 
     const senha_hash = await bcrypt.hash(dados.senha, 10);
-    await usuarioRepository.criar({ ...dados, nome, email, matricula, senha_hash });
+
+    // o codigo e sorteado; se ja existir no banco, sorteia de novo
+    for (let tentativa = 0; tentativa < 20; tentativa++) {
+        try {
+            await usuarioRepository.criar({ ...dados, nome, email, matricula, senha_hash, codigo: gerarCodigo() });
+            return;
+        } catch (erro) {
+            if (!ehCodigoRepetido(erro)) throw erro;
+        }
+    }
+    throw new AppError(503, "Não foi possível gerar um código único. Tente novamente.");
+}
+
+function ehCodigoRepetido(erro) {
+    return erro.code === "ER_DUP_ENTRY" && String(erro.sqlMessage).includes("codigo_UNIQUE");
 }
 
 async function login(matricula, senha) {

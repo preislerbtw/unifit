@@ -36,7 +36,12 @@ function Workouts() {
 
   async function handleDelete(workout) {
     if (!window.confirm(`Excluir a ficha "${workout.name}"?`)) return;
-    await deleteWorkout(workout.id);
+    try {
+      await deleteWorkout(workout.id);
+    } catch (err) {
+      setNotice(err.message);
+      return;
+    }
     setWorkouts((list) => list.filter((w) => w.id !== workout.id));
     setNotice("Ficha excluída.");
   }

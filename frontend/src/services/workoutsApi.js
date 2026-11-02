@@ -1,65 +1,114 @@
-// armazenamento provisório no navegador (localStorage).
-// quando o back-end existir (tabelas FICHA_TREINO e FICHA_EXERCICIO), troque o corpo
-// destas funções por chamadas fetch: GET/POST /fichas, PUT/DELETE /fichas/:id
-const KEY = "unifit:workouts";
+import { getSession } from "./session";
 
-function read() {
-  try {
-    return JSON.parse(localStorage.getItem(KEY)) ?? [];
-  } catch {
-    return [];
-  }
-}
-
-function write(list) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(list));
-  } catch {
-    // localStorage indisponível: ignora
-  }
-}
+// fichas no banco (tabelas ficha_treino e ficha_exercicio).
+// O back-end confere quem pode ver/editar; aqui sempre vai o id de quem está logado.
+const API_URL = "http://localhost:3000";
 
 export function newId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 }
 
-// Formato de uma ficha:
+function me() {
+  return getSession().userId;
+}
+
+async function request(path, options = {}) {
+  const response = await fetch(`${API_URL}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (response.status === 204) return null;
+
+  const resultado = await response.json();
+  if (!response.ok) {
+    const erro = new Error(resultado.message || "Erro ao acessar as fichas.");
+    erro.status = response.status;
+    throw erro;
+  }
+  return resultado;
+}
+
+// Formato de uma ficha (o mesmo de antes, ids sempre em texto):
 // { id, ownerId, ownerName, ownerLevel, name, goal, createdBy: { id, role, name },
 //   createdAt, updatedAt, exercises: [{ lineId, exerciseId, name, bodyPart, equipment,
 //   difficulty, sets, reps, load }] }
+function fromApi(f) {
+  return {
+    id: String(f.id),
+    ownerId: String(f.donoId),
+    ownerName: f.donoNome,
+    ownerLevel: f.donoNivel || undefined,
+    name: f.nome,
+    goal: f.objetivo,
+    createdBy: f.criadoPor
+      ? { id: String(f.criadoPor.id), role: f.criadoPor.perfil, name: f.criadoPor.nome }
+      : null,
+    createdAt: f.criadaEm,
+    updatedAt: f.atualizadaEm,
+    exercises: f.exercicios.map((e) => ({
+      lineId: String(e.id),
+      exerciseId: e.exercicioRef,
+      name: e.nome,
+      bodyPart: e.parteCorpo,
+      equipment: e.equipamento,
+      difficulty: e.dificuldade,
+      sets: e.series,
+      reps: e.repeticoes,
+      load: e.carga ?? "",
+    })),
+  };
+}
 
+function toApi(workout) {
+  return {
+    usuarioId: me(),
+    donoId: workout.ownerId,
+    nome: workout.name,
+    objetivo: workout.goal ?? "",
+    exercicios: workout.exercises.map((l) => ({
+      exercicioRef: l.exerciseId,
+      nome: l.name,
+      parteCorpo: l.bodyPart,
+      equipamento: l.equipment,
+      dificuldade: l.difficulty,
+      series: l.sets,
+      repeticoes: l.reps,
+      carga: l.load,
+    })),
+  };
+}
+
+// todas as fichas que o usuário logado enxerga
 export async function listWorkouts() {
-  return read();
+  const lista = await request(`/fichas?usuarioId=${me()}`);
+  return lista.map(fromApi);
 }
 
 export async function listWorkoutsOf(ownerId) {
-  return read()
-    .filter((w) => w.ownerId === ownerId)
-    .sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""));
+  const lista = await request(`/usuarios/${ownerId}/fichas?usuarioId=${me()}`);
+  return lista.map(fromApi);
 }
 
+// null se a ficha não existe ou o usuário não tem acesso
 export async function getWorkout(id) {
-  return read().find((w) => w.id === id) ?? null;
+  try {
+    return fromApi(await request(`/fichas/${id}?usuarioId=${me()}`));
+  } catch (erro) {
+    if (erro.status === 403 || erro.status === 404) return null;
+    throw erro;
+  }
 }
 
 // cria (sem id) ou atualiza (com id)
 export async function saveWorkout(workout) {
-  const list = read();
-  const now = new Date().toISOString();
-
-  if (workout.id && list.some((w) => w.id === workout.id)) {
-    const updated = { ...workout, updatedAt: now };
-    write(list.map((w) => (w.id === workout.id ? updated : w)));
-    return updated;
-  }
-
-  const created = { ...workout, id: newId(), createdAt: now, updatedAt: now };
-  write([...list, created]);
-  return created;
+  const salvo = workout.id
+    ? await request(`/fichas/${workout.id}`, { method: "PUT", body: JSON.stringify(toApi(workout)) })
+    : await request("/fichas", { method: "POST", body: JSON.stringify(toApi(workout)) });
+  return fromApi(salvo);
 }
 
 export async function deleteWorkout(id) {
-  write(read().filter((w) => w.id !== id));
+  await request(`/fichas/${id}?usuarioId=${me()}`, { method: "DELETE" });
 }
 
 // linha de exercício dentro de uma ficha

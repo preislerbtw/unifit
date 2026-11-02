@@ -6,5 +6,6 @@ router.use(require("./auth.routes"));
 router.use(require("./perfil.routes"));
 router.use(require("./chat.routes"));
 router.use(require("./professor.routes"));
+router.use(require("./ficha.routes"));
 
 module.exports = router;

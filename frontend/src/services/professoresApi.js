@@ -35,6 +35,37 @@ export async function listarProfessores() {
   return professores;
 }
 
+const API_URL = "http://localhost:3000";
+
+// professores que o aluno adicionou pelo código (vem do banco)
+export async function listarMeusProfessores(idUsuario) {
+  const response = await fetch(`${API_URL}/alunos/${idUsuario}/professores`);
+  const resultado = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resultado.message || "Não foi possível carregar os professores.");
+  }
+
+  return resultado;
+}
+
+// vincula o aluno ao professor dono do código. Devolve o professor.
+export async function adicionarProfessor(idUsuario, codigo) {
+  const response = await fetch(`${API_URL}/alunos/${idUsuario}/professores`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ codigo }),
+  });
+
+  const resultado = await response.json();
+
+  if (!response.ok) {
+    throw new Error(resultado.message || "Não foi possível adicionar o professor.");
+  }
+
+  return resultado.professor;
+}
+
 export async function criarAgendamento(dados) {
   console.log("Agendamento criado (simulado):", dados);
   return { ok: true };

@@ -31,7 +31,7 @@ export async function listMessages(convId) {
     text: msg.mensagem,
     sentAt: msg.criada_em,
     from: {
-      id: msg.remetente_id,
+      id: String(msg.remetente_id),
     },
   }));
 }
