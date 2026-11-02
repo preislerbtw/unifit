@@ -10,7 +10,7 @@ async function cadastrar(dados) {
     const matricula = String(dados.matricula ?? "").trim();
 
     if (!nome || !email || !dados.senha || !matricula) {
-        throw new AppError(400, "preencha nome, email, matricula e senha");
+        throw new AppError(400, "Preencha nome, email, matricula e senha");
     }
 
     const senha_hash = await bcrypt.hash(dados.senha, 10);
@@ -21,7 +21,7 @@ async function login(matricula, senha) {
     const matriculaLimpa = String(matricula ?? "").trim();
 
     if (!matriculaLimpa || !senha) {
-        throw new AppError(400, "informe matricula e senha!");
+        throw new AppError(400, "Informe matricula e senha!");
     }
 
     const user = await usuarioRepository.buscarPorMatricula(matriculaLimpa);
@@ -31,7 +31,7 @@ async function login(matricula, senha) {
     console.log("login:", JSON.stringify(matriculaLimpa), "| achou:", !!user, "| senhaCerta:", !!senhaCerta);
 
     if (!senhaCerta) {
-        throw new AppError(401, "usuario ou senha errados!");
+        throw new AppError(401, "Usuário ou senha errados!");
     }
 
     const professorId = await professorRepository.buscarIdPorUsuario(user.idUsuario);

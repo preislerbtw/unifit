@@ -49,7 +49,7 @@ function Exercises() {
       <div className="mb-7 relative max-w-[480px]">
         <input
           type="text"
-          placeholder="Buscar exercício (ex: su, agachamento, halter, peito...)"
+          placeholder="Buscar exercício (ex: supino, agachamento, puxada...)"
           value={busca}
           onChange={aoDigitar}
           autoFocus

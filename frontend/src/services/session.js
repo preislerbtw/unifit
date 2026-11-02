@@ -22,6 +22,11 @@ export function getSession() {
 }
 
 export function clearSession() {
+  // apaga as conversas com a ia de qualquer usuário neste navegador
+  Object.keys(sessionStorage)
+    .filter((key) => key.startsWith("unifit-chat-ia-"))
+    .forEach((key) => sessionStorage.removeItem(key));
+
   sessionStorage.removeItem(KEY);
   sessionStorage.removeItem("logado");
 }
