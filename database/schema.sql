@@ -41,6 +41,10 @@ CREATE TABLE IF NOT EXISTS `academia`.`usuario` (
   `altura` DECIMAL(5,2) NULL,
   `peso` DECIMAL(5,2) NULL,
   `codigo` CHAR(4) NULL,
+  -- escolha feita no cadastro: 1 = quer acompanhamento de personal, 0 = treina sozinho
+  `quer_personal` TINYINT(1) NOT NULL DEFAULT 1,
+  -- 1 = aceitou o termo de responsabilidade (obrigatorio para quem treina sozinho)
+  `aceitou_termos` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`idUsuario`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
   UNIQUE INDEX `matricula_UNIQUE` (`matricula` ASC) VISIBLE,

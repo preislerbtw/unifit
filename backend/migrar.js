@@ -32,6 +32,16 @@ async function temColuna(tabela, coluna) {
   }
   console.log(`Códigos gerados: ${semCodigo.length}.`);
 
+  // escolha do cadastro: com ou sem personal, e o aceite do termo de responsabilidade
+  if (!(await temColuna("usuario", "quer_personal"))) {
+    await db.query(`
+      ALTER TABLE usuario
+        ADD COLUMN quer_personal TINYINT(1) NOT NULL DEFAULT 1,
+        ADD COLUMN aceitou_termos TINYINT(1) NOT NULL DEFAULT 0
+    `);
+    console.log("usuario: quer_personal e aceitou_termos criadas.");
+  }
+
   // vinculo aluno <-> professor
   await db.query(`
     CREATE TABLE IF NOT EXISTS professor_aluno (
