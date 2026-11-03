@@ -277,6 +277,9 @@ CREATE TABLE IF NOT EXISTS `academia`.`agendamento` (
   `tipo` VARCHAR(45) NULL,
   `data_hora` DATETIME NULL,
   `status` VARCHAR(45) NULL,
+  -- quem cancelou ("aluno" ou "professor") e quando
+  `cancelado_por` VARCHAR(20) NULL,
+  `cancelado_em` DATETIME NULL,
   PRIMARY KEY (`idAgendamento`),
   INDEX `fk_agendamento_usuario1_idx` (`usuario_idUsuario` ASC) VISIBLE,
   INDEX `fk_agendamento_professor1_idx` (`professor_idProfessor` ASC) VISIBLE,

@@ -75,5 +75,15 @@ async function temColuna(tabela, coluna) {
     console.log("ficha_exercicio atualizada.");
   }
 
+  // agendamento: quem cancelou ("aluno" ou "professor") e quando
+  if (!(await temColuna("agendamento", "cancelado_por"))) {
+    await db.query(`
+      ALTER TABLE agendamento
+        ADD COLUMN cancelado_por VARCHAR(20) NULL,
+        ADD COLUMN cancelado_em DATETIME NULL
+    `);
+    console.log("agendamento atualizado.");
+  }
+
   process.exit(0);
 })();
