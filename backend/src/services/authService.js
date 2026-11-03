@@ -62,9 +62,6 @@ async function login(matricula, senha) {
     const user = await usuarioRepository.buscarPorMatricula(matriculaLimpa);
     const senhaCerta = user && (await bcrypt.compare(senha, user.senha_hash));
 
-    // TEMPORÁRIO: remover depois
-    console.log("login:", JSON.stringify(matriculaLimpa), "| achou:", !!user, "| senhaCerta:", !!senhaCerta);
-
     if (!senhaCerta) {
         throw new AppError(401, "Usuário ou senha errados!");
     }

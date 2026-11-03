@@ -74,9 +74,6 @@ function Chat() {
 
   const refresh = useCallback(async () => {
     const convsData = await listConversationsOf(session.userId);
-
-    console.log("CONVS DATA:", convsData);
-
     setConvs(Array.isArray(convsData) ? convsData : []);
 
     if (currentConvId) setMessages(await listMessages(currentConvId));

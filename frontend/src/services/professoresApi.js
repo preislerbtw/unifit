@@ -65,8 +65,3 @@ export async function adicionarProfessor(idUsuario, codigo) {
 
   return resultado.professor;
 }
-
-export async function criarAgendamento(dados) {
-  console.log("Agendamento criado (simulado):", dados);
-  return { ok: true };
-}
