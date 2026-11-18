@@ -1,6 +1,6 @@
 import { listAppointments } from "./appointmentsApi";
 
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "/api";
 
 // Alunos do professor: vínculo pelo código, feito pelo aluno ou pelo professor (tabela professor_aluno).
 // O admin vê todos os alunos. Os agendamentos ainda ficam no navegador, então

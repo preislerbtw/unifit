@@ -3,7 +3,7 @@
 //   GET   /agendamentos/ocupados
 //   POST  /agendamentos
 //   PATCH /agendamentos/:id/status
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "/api";
 
 export class ConflictError extends Error {
   constructor(message) {

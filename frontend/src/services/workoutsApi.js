@@ -2,7 +2,7 @@ import { getSession } from "./session";
 
 // fichas no banco (tabelas ficha_treino e ficha_exercicio).
 // O back-end confere quem pode ver/editar; aqui sempre vai o id de quem está logado.
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "/api";
 
 export function newId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;

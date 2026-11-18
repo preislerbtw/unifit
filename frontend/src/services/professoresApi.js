@@ -35,7 +35,7 @@ export async function listarProfessores() {
   return professores;
 }
 
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "/api";
 
 // professores que o aluno adicionou pelo código (vem do banco)
 export async function listarMeusProfessores(idUsuario) {

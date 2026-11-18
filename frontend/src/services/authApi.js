@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "/api";
+
 export async function cadastrar(dados) {
   const response = await fetch(`${API_URL}/cadastro`, {
     method: "POST",
